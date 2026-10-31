@@ -52,8 +52,8 @@ export function Profile() {
                 const gap = b.actualAccuracy === null ? null : b.actualAccuracy - b.statedConfidence;
                 return (
                   <tr key={b.band}>
-                    <td>{b.band}</td><td>{b.statedConfidence}%</td><td>{b.actualAccuracy === null ? "–" : `${b.actualAccuracy}%`}</td><td>{b.n}</td>
-                    <td style={{ textAlign: "left", color: gap !== null && gap < -15 ? "var(--bad)" : gap !== null && gap > 15 ? "var(--warn)" : "var(--good)" }}>
+                    <td className="num">{b.band}</td><td className="num">{b.statedConfidence}%</td><td className="num">{b.actualAccuracy === null ? "–" : `${b.actualAccuracy}%`}</td><td className="num">{b.n}</td>
+                    <td style={{ textAlign: "left", fontWeight: 600, color: gap !== null && gap < -15 ? "var(--coral-text)" : gap !== null && gap > 15 ? "var(--gold-text)" : "var(--green-text)" }}>
                       {gap === null ? "" : gap < -15 ? "overconfident" : gap > 15 ? "underconfident" : "calibrated"}
                     </td>
                   </tr>

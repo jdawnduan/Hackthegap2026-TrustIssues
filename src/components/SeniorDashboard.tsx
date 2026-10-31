@@ -24,7 +24,7 @@ export function SeniorDashboard() {
         <div className="score"><small>Decisions logged</small><div className="v">{app.results.length}</div></div>
         <div className="score"><small>Human overruled AI, and was right</small><div className="v">{overrides.length ? `${overridesRight}/${overrides.length}` : "–"}</div></div>
         <div className="score"><small>Human trusted AI, and was right</small><div className="v">{accepts.length ? `${acceptsRight}/${accepts.length}` : "–"}</div></div>
-        <div className="score"><small>Rubber-stamp flags</small><div className="v" style={{ color: flagged ? "var(--bad)" : undefined }}>{flagged}</div></div>
+        <div className="score"><small>Rubber-stamp flags</small><div className="v" style={{ color: flagged ? "var(--coral-text)" : undefined }}>{flagged}</div></div>
       </div>
 
       <div className="panel">
@@ -38,16 +38,16 @@ export function SeniorDashboard() {
             <tbody>
               {app.results.map((r) => (
                 <tr key={r.caseId}>
-                  <td className="mono">{new Date(r.submittedAt).toLocaleTimeString()}</td>
+                  <td className="num">{new Date(r.submittedAt).toLocaleTimeString()}</td>
                   <td style={{ textAlign: "left" }}>{r.caseTitle}</td>
                   <td style={{ textAlign: "left" }}>{r.caseId.startsWith("c1") ? "Buy 100 MWh midday, sell evening" : "Hold; alert on 18:00 update"}</td>
                   <td style={{ textAlign: "left" }}><strong>{r.submission.decision}</strong>{r.submission.decision === "escalate" && " → senior"}</td>
-                  <td>{r.submission.confidence}%</td>
-                  <td>{r.submission.secondsTaken}</td>
-                  <td>{r.submission.hintsUsed}</td>
+                  <td className="num">{r.submission.confidence}%</td>
+                  <td className="num">{r.submission.secondsTaken}</td>
+                  <td className="num">{r.submission.hintsUsed}</td>
                   <td style={{ textAlign: "left" }}>{r.submission.tabOpens.map((t) => TAB_LABELS[t.tab]).join(", ") || <span className="flag">none</span>}</td>
                   <td><span className={`pill ${r.correct ? "good" : "bad"}`}>{r.correct ? "ok" : "wrong"}</span>{r.rubberStampFlag && <span className="pill bad" style={{ marginLeft: 4 }}>stamp</span>}</td>
-                  <td style={{ color: (r.pnlEUR ?? 0) < 0 ? "var(--bad)" : undefined }}>{r.pnlEUR === null ? "–" : `${r.pnlEUR >= 0 ? "+" : "−"}${Math.abs(r.pnlEUR).toLocaleString("en-US")}`}</td>
+                  <td className={`num ${(r.pnlEUR ?? 0) < 0 ? "neg" : ""}`}>{r.pnlEUR === null ? "–" : `${r.pnlEUR >= 0 ? "+" : "−"}${Math.abs(r.pnlEUR).toLocaleString("en-US")}`}</td>
                   <td style={{ textAlign: "left" }}>{r.submission.decision === "escalate" ? "Senior trader" : JUNIOR.name}</td>
                 </tr>
               ))}

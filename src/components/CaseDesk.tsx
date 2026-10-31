@@ -153,7 +153,7 @@ export function CaseDesk({ def, onDone }: Props) {
       </div>
 
       {stage === "firsttake" && (
-        <div className="panel" style={{ maxWidth: 760 }}>
+        <div className="panel exercise" style={{ maxWidth: 760 }}>
           <h2>Before you see the copilot</h2>
           <p>{def.brief}</p>
           <p><strong>Task:</strong> {def.task}</p>
@@ -174,17 +174,17 @@ export function CaseDesk({ def, onDone }: Props) {
         <div className="grid-desk">
           {/* Left: brief + copilot */}
           <div className="stack">
-            <div className="panel">
+            <div className="panel plain">
               <h4>Situation</h4>
               <p>{def.brief}</p>
               <p><strong>Task:</strong> {def.task}</p>
               {c2?.needsCleanup && <div className="alert">{c2.cleanupNote}</div>}
             </div>
             <div className="card-copilot">
-              <div className="row between"><strong style={{ color: "var(--copilot)" }}>AI copilot</strong><span className="pill copilot">recommendation</span></div>
+              <div className="row between"><strong style={{ color: "var(--navy)" }}>AI copilot</strong><span className="pill copilot">recommendation</span></div>
               <h3 style={{ marginTop: 6 }}>{copilot.headline}</h3>
               <p>{copilot.body}</p>
-              {copilot.expectedMarginEUR !== undefined && <p><strong>Expected margin:</strong> EUR {copilot.expectedMarginEUR.toLocaleString("en-US")}</p>}
+              {copilot.expectedMarginEUR !== undefined && <p><strong>Expected margin:</strong> <span className="num">EUR {copilot.expectedMarginEUR.toLocaleString("en-US")}</span></p>}
               <div className="sources">{copilot.sources.map((s) => <span key={s}>{s}</span>)}</div>
             </div>
           </div>
@@ -196,10 +196,10 @@ export function CaseDesk({ def, onDone }: Props) {
 
           {/* Right: senior + decision */}
           <div className="stack">
-            <div className="panel">
+            <div className="panel exercise">
               <SeniorChat chat={chat} busy={busy} source={source} onSend={onSend} />
             </div>
-            <div className="panel">
+            <div className="panel exercise">
               <div className="row between" style={{ marginBottom: 8 }}><h3 style={{ margin: 0 }}>Your decision</h3><span className="principle">AI recommends. You decide.</span></div>
               <div className="decisions">
                 {(["accept", "modify", "reject", "escalate"] as Decision[]).map((d) => (
@@ -219,7 +219,7 @@ export function CaseDesk({ def, onDone }: Props) {
                 </>
               )}
               <div className="field">
-                <label>Confidence: {confidence}%</label>
+                <label>Confidence: <span className="num">{confidence}%</span></label>
                 <input type="range" min={0} max={100} step={5} value={confidence} onChange={(e) => setConfidence(Number(e.target.value))} />
               </div>
               <div className="field">
@@ -227,7 +227,7 @@ export function CaseDesk({ def, onDone }: Props) {
                 <textarea value={rationale} onChange={(e) => setRationale(e.target.value)} placeholder="I checked … and therefore …" />
               </div>
               <div className="row between" style={{ marginTop: 10 }}>
-                <small className="muted">{opened.size}/{tabs.length} tabs opened · {hintsUsed} hints</small>
+                <small className="muted"><span className="num">{opened.size}/{tabs.length}</span> tabs opened · <span className="num">{hintsUsed}</span> hints</small>
                 <button className="btn primary" disabled={!canSubmit} onClick={submit}>{submitting ? "Grading…" : "Submit decision"}</button>
               </div>
             </div>

@@ -28,7 +28,7 @@ export function DebriefInbox() {
 
   return (
     <div className="page stack">
-      <div className="panel">
+      <div className="panel exercise">
         <h1>Debrief inbox</h1>
         <p className="muted">Senior traders hold debriefs after difficult days. Paste a note; the AI drafts a new gym case from it. <strong>Nothing reaches a junior until a senior approves it.</strong></p>
         <textarea value={note} onChange={(e) => setNote(e.target.value)} style={{ minHeight: 110 }} />

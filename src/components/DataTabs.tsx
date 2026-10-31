@@ -71,8 +71,8 @@ function Prices({ f }: { f: HourPoint[] }) {
           <tbody>
             {Array.from({ length: 12 }, (_, i) => (
               <tr key={i}>
-                <td>{hh(i)}</td><td style={{ color: f[i].price < 0 ? "var(--bad)" : undefined }}>{f[i].price}</td>
-                <td>{hh(i + 12)}</td><td style={{ color: f[i + 12].price < 0 ? "var(--bad)" : undefined }}>{f[i + 12].price}</td>
+                <td className="num">{hh(i)}</td><td className={`num ${f[i].price < 0 ? "neg" : ""}`}>{f[i].price}</td>
+                <td className="num">{hh(i + 12)}</td><td className={`num ${f[i + 12].price < 0 ? "neg" : ""}`}>{f[i + 12].price}</td>
               </tr>
             ))}
           </tbody>
@@ -122,7 +122,7 @@ function Weather({ f }: { f: HourPoint[] }) {
       <div className="scroll" style={{ maxHeight: 170 }}>
         <table className="data">
           <thead><tr><th>Hour</th><th>Cloud %</th><th>Solar GW</th><th>Temp °C</th></tr></thead>
-          <tbody>{f.map((p) => <tr key={p.hour}><td>{hh(p.hour)}</td><td>{p.cloud}</td><td>{p.solar}</td><td>{p.temp}</td></tr>)}</tbody>
+          <tbody>{f.map((p) => <tr key={p.hour}><td className="num">{hh(p.hour)}</td><td className="num">{p.cloud}</td><td className="num">{p.solar}</td><td className="num">{p.temp}</td></tr>)}</tbody>
         </table>
       </div>
     </div>
@@ -158,7 +158,7 @@ function Borders({ b }: { b: BorderCapacity[] }) {
           {b.map((r) => (
             <tr key={`${r.from}-${r.to}`}>
               <td>{r.from}</td><td style={{ textAlign: "left" }}>{r.to}</td>
-              <td style={{ color: r.published ? undefined : "var(--muted)" }}>{r.published ? (r.minMW === r.maxMW ? `${r.minMW}` : `${r.minMW}–${r.maxMW}`) : "n/e"}</td>
+              <td className="num" style={{ color: r.published ? undefined : "var(--text-2)" }}>{r.published ? (r.minMW === r.maxMW ? `${r.minMW}` : `${r.minMW}–${r.maxMW}`) : "n/e"}</td>
               <td style={{ textAlign: "left" }}>{r.note || "Published hourly"}</td>
             </tr>
           ))}
@@ -172,8 +172,8 @@ function Borders({ b }: { b: BorderCapacity[] }) {
           <tbody>
             {Array.from({ length: 12 }, (_, i) => (
               <tr key={i}>
-                <td>{hh(i)}</td><td style={{ color: NET_POSITION_GW[i] < 0 ? "var(--accent)" : undefined }}>{NET_POSITION_GW[i]}</td>
-                <td>{hh(i + 12)}</td><td style={{ color: NET_POSITION_GW[i + 12] < 0 ? "var(--accent)" : undefined }}>{NET_POSITION_GW[i + 12]}</td>
+                <td className="num">{hh(i)}</td><td className={`num ${NET_POSITION_GW[i] < 0 ? "neg" : ""}`}>{NET_POSITION_GW[i]}</td>
+                <td className="num">{hh(i + 12)}</td><td className={`num ${NET_POSITION_GW[i + 12] < 0 ? "neg" : ""}`}>{NET_POSITION_GW[i + 12]}</td>
               </tr>
             ))}
           </tbody>
@@ -211,15 +211,15 @@ function Auction({ a }: { a: NonNullable<TabData["auction"]> }) {
           <tbody>
             {rows.map((r) => (
               <tr key={r.h}>
-                <td>{hh(r.h)}</td><td style={{ textAlign: "left" }}>{r.mw > 0 ? "Sell" : "Buy"}</td><td>{Math.abs(r.mw)}</td>
-                <td>{a.cleared[r.h]}</td><td>{a.intraday[r.h]}</td>
-                <td style={{ color: a.intraday[r.h] - a.cleared[r.h] > 0 ? "var(--good)" : undefined }}>{(a.intraday[r.h] - a.cleared[r.h] > 0 ? "+" : "") + (a.intraday[r.h] - a.cleared[r.h])}</td>
+                <td className="num">{hh(r.h)}</td><td style={{ textAlign: "left" }}>{r.mw > 0 ? "Sell" : "Buy"}</td><td className="num">{Math.abs(r.mw)}</td>
+                <td className="num">{a.cleared[r.h]}</td><td className="num">{a.intraday[r.h]}</td>
+                <td className={`num ${a.intraday[r.h] - a.cleared[r.h] > 0 ? "pos" : ""}`}>{(a.intraday[r.h] - a.cleared[r.h] > 0 ? "+" : "") + (a.intraday[r.h] - a.cleared[r.h])}</td>
               </tr>
             ))}
           </tbody>
         </table>
       )}
-      {a.issues.length > 0 && <ul className="clean" style={{ marginTop: 8, color: "var(--bad)" }}>{a.issues.map((i, k) => <li key={k}>{i}</li>)}</ul>}
+      {a.issues.length > 0 && <ul className="clean" style={{ marginTop: 8, color: "var(--coral-text)" }}>{a.issues.map((i, k) => <li key={k}>{i}</li>)}</ul>}
     </div>
   );
 }

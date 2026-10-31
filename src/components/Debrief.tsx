@@ -20,11 +20,11 @@ export function Debrief({ result, onNext, nextLabel }: Props) {
           <span className="pill" style={{ background: "var(--panel)" }}>{result.gradedBy === "claude" ? "Graded by rules + Claude" : "Graded by rules (offline)"}</span>
         </div>
         <p>
-          You chose <strong>{sub.decision}</strong> with {sub.confidence}% confidence after {sub.secondsTaken}s, opened {sub.tabOpens.length} tabs and used {sub.hintsUsed} hints.
+          You chose <strong>{sub.decision}</strong> with <span className="num">{sub.confidence}%</span> confidence after <span className="num">{sub.secondsTaken}s</span>, opened <span className="num">{sub.tabOpens.length}</span> tabs and used <span className="num">{sub.hintsUsed}</span> hints.
           {sub.late && " You missed gate closure."}
         </p>
         {result.pnlEUR !== null && (
-          <p><strong>P&L vs. a senior's plan:</strong> {result.pnlEUR >= 0 ? "+" : "−"}EUR {Math.abs(result.pnlEUR).toLocaleString("en-US")}. <span style={{ fontWeight: 400 }}>{result.pnlNote}</span></p>
+          <p><strong>P&L vs. a senior's plan:</strong> <span className={`num ${result.pnlEUR < 0 ? "neg" : "pos"}`}>{result.pnlEUR >= 0 ? "+" : "−"}EUR {Math.abs(result.pnlEUR).toLocaleString("en-US")}</span>. <span style={{ fontWeight: 400 }}>{result.pnlNote}</span></p>
         )}
       </div>
 
@@ -61,7 +61,7 @@ export function Debrief({ result, onNext, nextLabel }: Props) {
               <div className="score" key={s.id}>
                 <small>{s.label}</small>
                 <div className="v">{v === null ? "–" : v}</div>
-                {v !== null && <><div className="bar"><i style={{ width: `${v}%` }} /></div><small className={v >= prev ? "" : "flag"}>{v >= prev ? "+" : ""}{v - prev} vs week {prevWeek.week}</small></>}
+                {v !== null && <><div className="bar"><i style={{ width: `${v}%` }} /></div><small className={`num ${v >= prev ? "pos" : "neg"}`}>{v >= prev ? "+" : ""}{v - prev} vs week {prevWeek.week}</small></>}
                 {v === null && <small className="muted">not assessed here</small>}
               </div>
             );

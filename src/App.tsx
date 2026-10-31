@@ -49,7 +49,7 @@ export function App() {
       {view === "home" && (
         <div className="page stack">
           <div className="home-hero">
-            <div className="panel">
+            <div className="panel plain">
               <h1>A judgement gym for junior energy traders</h1>
               <p className="principle" style={{ marginBottom: 12 }}>AI recommends. Human decides.</p>
               <p>{JUNIOR.name} is {JUNIOR.currentWeek} weeks into Alpiq's short-term desk. Every case gives her an AI copilot's recommendation under a gate-closure countdown. Sometimes the copilot is wrong. Her job is to find out which, and to say what she checked.</p>
@@ -66,10 +66,10 @@ export function App() {
                 const locked = c.id === CASE2.id && !done1;
                 return (
                   <div key={c.id} className={`case-tile ${result ? "done" : ""} ${locked ? "locked" : ""}`}>
-                    <div className="row between"><h3 style={{ margin: 0 }}>{c.title}</h3><small className="mono muted">{c.clock}</small></div>
+                    <div className="row between"><h3 style={{ margin: 0 }}>{c.title}</h3><small className="muted">{c.clock}</small></div>
                     <p className="muted" style={{ margin: 0 }}>{c.brief}</p>
                     <div className="row between">
-                      <small>{Math.round(c.countdownSec / 60)} min · {result ? <span className={`pill ${result.correct ? "good" : "bad"}`}>{result.correct ? "passed" : "failed"} · {result.overall}</span> : locked ? <span className="pill">play Case 1 first</span> : <span className="pill accent">ready</span>}</small>
+                      <small><span className="num">{Math.round(c.countdownSec / 60)} min</span> · {result ? <span className={`pill ${result.correct ? "good" : "bad"}`}>{result.correct ? "passed" : "failed"} · {result.overall}</span> : locked ? <span className="pill">play Case 1 first</span> : <span className="pill accent">ready</span>}</small>
                       <button className="btn primary sm" disabled={locked} onClick={() => startCase(c)}>{result ? "Replay" : "Start"}</button>
                     </div>
                   </div>
