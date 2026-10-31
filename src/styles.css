@@ -161,3 +161,39 @@ ul.clean li { margin: 3px 0; }
 /* First-take lock: the senior and decision panel wait until the junior has formed a view */
 .locked { opacity: .5; pointer-events: none; filter: grayscale(.6); }
 .lock-note { font-size: 12.5px; font-weight: 500; color: var(--muted); background: var(--panel-2); border: 1px dashed var(--border); border-radius: var(--radius-sm); padding: 8px 10px; }
+
+/* Role switch: profile avatar in the top right */
+.avatar { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--border); background: var(--panel); border-radius: 999px; padding: 3px 10px 3px 3px; cursor: pointer; color: var(--text); font-weight: 600; font-size: 12px; }
+.avatar:hover { background: var(--panel-2); }
+.avatar .initial { width: 26px; height: 26px; border-radius: 50%; display: inline-grid; place-items: center; color: #fff; background: var(--accent); font-size: 13px; }
+.avatar.senior .initial { background: var(--senior); }
+.nav button.wrap { color: var(--muted); border: 1px dashed var(--border); margin-left: 6px; }
+.nav button.wrap.active { background: var(--panel-2); color: var(--text); }
+
+/* ⋯ menu button */
+.btn.more { padding: 2px 8px; font-size: 16px; line-height: 1; letter-spacing: 1px; }
+
+/* Run log modal */
+.overlay { position: fixed; inset: 0; background: rgba(20, 20, 24, .45); display: flex; align-items: flex-start; justify-content: center; padding: 40px 16px; z-index: 50; overflow: auto; }
+.modal { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; width: min(880px, 100%); max-height: calc(100vh - 80px); overflow: auto; }
+.timeline { list-style: none; margin: 0; padding: 0; border-left: 2px solid var(--border); }
+.timeline li.ev { display: grid; grid-template-columns: 52px 22px 1fr; gap: 8px; align-items: start; padding: 6px 0 6px 10px; position: relative; }
+.timeline li.ev + li.ev { border-top: 1px solid var(--border); }
+.timeline .t { font-family: var(--mono); font-size: 12px; color: var(--muted); padding-top: 2px; }
+.timeline .g { font-size: 13px; color: var(--muted); padding-top: 1px; }
+.timeline .body { display: flex; flex-direction: column; gap: 2px; }
+.timeline .title { font-weight: 600; font-size: 13px; }
+.timeline .detail { font-size: 13px; color: var(--text); white-space: pre-wrap; }
+.timeline li.junior_message .detail { color: var(--text); background: var(--panel-2); padding: 4px 8px; border-radius: 6px; }
+.timeline li.senior_message .detail { background: var(--senior-soft); padding: 4px 8px; border-radius: 6px; }
+.timeline li.senior_message .g, .timeline li.senior_message .title { color: var(--senior); }
+.timeline li.copilot_revealed .g, .timeline li.copilot_revealed .title { color: var(--copilot); }
+.timeline li.submitted .g, .timeline li.submitted .title, .timeline li.decision_selected .g, .timeline li.decision_selected .title { color: var(--accent); }
+
+/* Wrap-up page (used as the closing slide) */
+.wrapup h1 { font-size: 28px; }
+.wrapup table.rubric td, .wrapup table.rubric th { font-size: 15px; padding: 14px 10px; vertical-align: top; }
+.wrapup table.rubric td:nth-child(2) { font-size: 20px; font-weight: 700; text-align: center; }
+.wrapup table.rubric ul { margin: 0; }
+.wrapup .closing { text-align: center; padding: 28px 16px; border-color: var(--accent); background: var(--accent-soft); }
+.wrapup .closing h2 { font-size: 24px; color: var(--accent); }

@@ -4,8 +4,14 @@ import { useSyncExternalStore } from "react";
 import { SEED_CALIBRATION, SEED_REPLAY, SEED_WEEKS } from "../shared/history";
 import type { CalibrationPoint, CaseResult, DraftCase, ReplayItem, Schedule, WeekSnapshot } from "../shared/types";
 
+export type Role = "junior" | "senior";
+
 export interface AppState {
+  /** Latest result per case (drives the profile). */
   results: CaseResult[];
+  /** Every run, oldest first (drives case history and the event logs). */
+  runs: CaseResult[];
+  role: Role;
   weeks: WeekSnapshot[];
   calibration: CalibrationPoint[];
   replay: ReplayItem[];
@@ -20,6 +26,8 @@ const KEY = "gate-closure-state-v1";
 function initial(): AppState {
   return {
     results: [],
+    runs: [],
+    role: "junior",
     weeks: SEED_WEEKS,
     calibration: SEED_CALIBRATION,
     replay: SEED_REPLAY,
@@ -75,6 +83,7 @@ export function useAppState(): AppState {
 export function recordResult(result: CaseResult) {
   setState((s) => {
     const results = [...s.results.filter((r) => r.caseId !== result.caseId), result];
+    const runs = [...s.runs, result];
     const calibration = [...s.calibration, { confidence: result.submission.confidence, correct: result.correct }];
     const replay = [...s.replay];
     if (result.trapCaught === false) {
@@ -84,7 +93,7 @@ export function recordResult(result: CaseResult) {
         variant: "Week 10 · Hydro reservoir already full before a sell bid",
       });
     }
-    return { results, calibration, replay };
+    return { results, runs, calibration, replay };
   });
 }
 

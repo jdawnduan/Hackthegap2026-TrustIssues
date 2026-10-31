@@ -126,6 +126,26 @@ export interface CaseDefinition {
   usesBidTable: boolean;
 }
 
+/** Every observable action during a case run, with seconds since the case started. */
+export type CaseEventType =
+  | "case_started"
+  | "tab_opened"
+  | "first_take"
+  | "first_take_skipped"
+  | "copilot_revealed"
+  | "junior_message"
+  | "senior_message"
+  | "decision_selected"
+  | "schedule_edited"
+  | "submitted";
+
+export interface CaseEvent {
+  t: number; // seconds since the case started
+  type: CaseEventType;
+  detail?: string;
+  hintLevel?: number;
+}
+
 /** One logged tab open. */
 export interface TabOpen {
   tab: TabId;
@@ -149,12 +169,14 @@ export interface Submission {
   unwindCondition?: string;
   tabOpens: TabOpen[];
   chat: ChatMessage[];
+  events: CaseEvent[];
   hintsUsed: number;
   secondsTaken: number;
   late: boolean;
 }
 
 export interface CaseResult {
+  runId: string;
   caseId: string;
   caseTitle: string;
   week: number;

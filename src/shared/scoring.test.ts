@@ -13,6 +13,7 @@ const base = (over: Partial<Submission>): Submission => ({
   firstTake: "",
   tabOpens: [],
   chat: [],
+  events: [],
   hintsUsed: 0,
   secondsTaken: 120,
   late: false,

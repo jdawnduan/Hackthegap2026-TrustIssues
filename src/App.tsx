@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { api } from "./api";
 import { CaseDesk } from "./components/CaseDesk";
+import { CaseHistory } from "./components/CaseHistory";
+import { WrapUp } from "./components/WrapUp";
 import { Debrief } from "./components/Debrief";
 import { DebriefInbox } from "./components/DebriefInbox";
 import { Profile } from "./components/Profile";
@@ -8,9 +10,12 @@ import { SeniorDashboard } from "./components/SeniorDashboard";
 import { CASE1, CASE2, CASES } from "./shared/cases";
 import { JUNIOR } from "./shared/history";
 import type { CaseDefinition, CaseResult } from "./shared/types";
-import { useAppState } from "./state/store";
+import { setState, useAppState } from "./state/store";
 
-type View = "home" | "case" | "debrief" | "profile" | "senior" | "inbox";
+type View = "home" | "case" | "debrief" | "profile" | "history" | "senior" | "inbox" | "wrapup";
+
+const JUNIOR_NAV: [View, string][] = [["home", "Cases"], ["profile", "Judgement profile"], ["history", "My case runs"]];
+const SENIOR_NAV: [View, string][] = [["senior", "Team dashboard"], ["inbox", "Debrief inbox"]];
 
 export function App() {
   const app = useAppState();
@@ -30,20 +35,30 @@ export function App() {
     setView("case");
   };
   const done1 = app.results.some((r) => r.caseId === CASE1.id);
+  const nav = app.role === "junior" ? JUNIOR_NAV : SENIOR_NAV;
+  const toggleRole = () => {
+    const role = app.role === "junior" ? "senior" : "junior";
+    setState({ role });
+    setView(role === "junior" ? "home" : "senior");
+  };
 
   return (
     <div className="app">
       <header className="topbar">
-        <div className="brand"><span className="dot" />Gate Closure</div>
+        <div className="brand"><span className="dot" />Judgement gym</div>
         <nav className="nav">
-          {([["home", "Cases"], ["profile", "Judgement profile"], ["senior", "Senior dashboard"], ["inbox", "Debrief inbox"]] as [View, string][]).map(([v, l]) => (
+          {nav.map(([v, l]) => (
             <button key={v} className={view === v || (v === "home" && (view === "case" || view === "debrief")) ? "active" : ""} onClick={() => setView(v)}>{l}</button>
           ))}
+          <button className={`wrap ${view === "wrapup" ? "active" : ""}`} onClick={() => setView("wrapup")}>Wrap-up</button>
         </nav>
         <div className="spacer" />
-        <span className="pill">{JUNIOR.name} · week {JUNIOR.currentWeek}</span>
         {health && <span className={`pill ${health.claude ? "good" : "warn"}`} title={health.claude ? `Senior and grader run on ${health.model}` : "No ANTHROPIC_API_KEY: scripted senior, rule-based grading"}>{health.claude ? "AI live" : "offline mode"}</span>}
         <span className="pill accent">Team Trust Issues</span>
+        <button className={`avatar ${app.role}`} onClick={toggleRole} title={app.role === "junior" ? `${JUNIOR.name}, junior trader · switch to the senior view` : "Senior trader · switch to the junior view"} aria-label="Switch role">
+          <span className="initial">{app.role === "junior" ? JUNIOR.name[0] : "S"}</span>
+          <span className="who">{app.role === "junior" ? `${JUNIOR.name} · week ${JUNIOR.currentWeek}` : "Senior trader"}</span>
+        </button>
       </header>
 
       {view === "home" && (
@@ -102,8 +117,10 @@ export function App() {
       )}
 
       {view === "profile" && <Profile />}
+      {view === "history" && <CaseHistory />}
       {view === "senior" && <SeniorDashboard />}
       {view === "inbox" && <DebriefInbox />}
+      {view === "wrapup" && <WrapUp />}
     </div>
   );
 }

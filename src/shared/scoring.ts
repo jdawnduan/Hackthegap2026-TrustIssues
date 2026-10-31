@@ -162,6 +162,7 @@ export function gradeWithRules(
   if (rubberStampFlag) feedback.push("Flagged as a possible rubber stamp: fast approval with little evidence checked.");
 
   return {
+    runId: `${def.id}-${Date.now()}`,
     caseId: def.id,
     caseTitle: def.title,
     week,

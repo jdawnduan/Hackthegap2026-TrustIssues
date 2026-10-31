@@ -12,7 +12,8 @@ import {
   NEWS_AFTERNOON,
   NEWS_MORNING,
 } from "../shared/market";
-import type { CaseDefinition, CaseResult, ChatMessage, Decision, Schedule, Submission, TabId, TabOpen } from "../shared/types";
+import type { CaseDefinition, CaseEvent, CaseEventType, CaseResult, ChatMessage, Decision, Schedule, Submission, TabId, TabOpen } from "../shared/types";
+import { TAB_LABELS } from "../shared/types";
 import { JUNIOR } from "../shared/history";
 import { recordResult, setState, useAppState } from "../state/store";
 import { BidTable } from "./BidTable";
@@ -59,12 +60,24 @@ export function CaseDesk({ def, onDone }: Props) {
   }, []);
   const remaining = def.countdownSec - elapsed;
 
+  // --- event log: everything the junior does, with seconds since the case started
+  const eventsRef = useRef<CaseEvent[]>([]);
+  const log = (type: CaseEventType, detail?: string, hintLevel?: number) => {
+    eventsRef.current.push({ t: Math.floor((Date.now() - startRef.current) / 1000), type, detail, hintLevel });
+  };
+  useEffect(() => {
+    log("case_started", def.title);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const [stage, setStage] = useState<Stage>("firsttake");
   const [firstTake, setFirstTake] = useState("");
   const [tabOpens, setTabOpens] = useState<TabOpen[]>([]);
   const opened = useMemo(() => new Set(tabOpens.map((t) => t.tab)), [tabOpens]);
-  const logOpen = (tab: TabId) =>
+  const logOpen = (tab: TabId) => {
+    log("tab_opened", TAB_LABELS[tab]);
     setTabOpens((prev) => (prev.some((t) => t.tab === tab) ? prev : [...prev, { tab, atSec: Math.floor((Date.now() - startRef.current) / 1000) }]));
+  };
 
   // --- chat
   const [chat, setChat] = useState<ChatMessage[]>([]);
@@ -77,6 +90,7 @@ export function CaseDesk({ def, onDone }: Props) {
     try {
       const out = await api.senior({ caseId: def.id, chat: next, tabOpens, hintLevelSoFar, position: position ?? undefined });
       setSource(out.source);
+      log("senior_message", out.reply, out.hintLevel);
       setChat([...next, { role: "senior", text: out.reply, hintLevel: out.hintLevel }]);
     } catch {
       setChat([...next, { role: "senior", text: "(The senior is unavailable right now. Keep going on your own.)" }]);
@@ -85,6 +99,7 @@ export function CaseDesk({ def, onDone }: Props) {
     }
   };
   const onSend = (text: string) => {
+    log("junior_message", text);
     const next = [...chat, { role: "junior" as const, text }];
     setChat(next);
     void askSenior(next);
@@ -99,7 +114,22 @@ export function CaseDesk({ def, onDone }: Props) {
   }, [stage]);
 
   // --- decision
-  const [decision, setDecision] = useState<Decision | null>(null);
+  const [decision, setDecisionState] = useState<Decision | null>(null);
+  const setDecision = (d: Decision) => {
+    if (d !== decision) log("decision_selected", label(d));
+    setDecisionState(d);
+  };
+  const reveal = (skipped: boolean) => {
+    if (skipped) log("first_take_skipped");
+    else log("first_take", firstTake.trim());
+    log("copilot_revealed");
+    setStage("work");
+  };
+  const onScheduleChange = (next: Schedule) => {
+    const h = next.findIndex((v, i) => v !== schedule[i]);
+    if (h >= 0) log("schedule_edited", `${String(h).padStart(2, "0")}:00 → ${next[h] > 0 ? "sell" : next[h] < 0 ? "buy" : "flat"} ${Math.abs(next[h])} MW`);
+    setSchedule(next);
+  };
   const [confidence, setConfidence] = useState(70);
   const [rationale, setRationale] = useState("");
   const [priceLimit, setPriceLimit] = useState("");
@@ -111,6 +141,7 @@ export function CaseDesk({ def, onDone }: Props) {
   const submit = async () => {
     if (!decision) return;
     setSubmitting(true);
+    log("submitted", `${label(decision)} · ${confidence}% confidence`);
     const submission: Submission = {
       caseId: def.id,
       decision,
@@ -122,6 +153,7 @@ export function CaseDesk({ def, onDone }: Props) {
       unwindCondition: isCase2 ? unwind : undefined,
       tabOpens,
       chat,
+      events: eventsRef.current,
       hintsUsed,
       secondsTaken: Math.floor((Date.now() - startRef.current) / 1000),
       late: remaining < 0,
@@ -168,8 +200,8 @@ export function CaseDesk({ def, onDone }: Props) {
               <textarea value={firstTake} onChange={(e) => setFirstTake(e.target.value)} placeholder="e.g. Sunny day, so charge at midday and sell in the evening. I'd check the battery first." />
               <small className="muted">Logged before the AI's view so we can measure whether the copilot pulls you off a good instinct.</small>
               <div className="row" style={{ marginTop: 10 }}>
-                <button className="btn primary" onClick={() => setStage("work")} disabled={!firstTake.trim()}>Show the copilot's recommendation</button>
-                <button className="btn" onClick={() => setStage("work")}>Skip</button>
+                <button className="btn primary" onClick={() => reveal(false)} disabled={!firstTake.trim()}>Show the copilot's recommendation</button>
+                <button className="btn" onClick={() => reveal(true)}>Skip</button>
               </div>
             </div>
           ) : (
@@ -204,7 +236,7 @@ export function CaseDesk({ def, onDone }: Props) {
               {def.usesBidTable && decision === "modify" && (
                 <div className="field">
                   <label>Your schedule (starts from the copilot's)</label>
-                  <BidTable schedule={schedule} prices={DA_CLEARED} knowsStateOfCharge={opened.has("asset")} onChange={setSchedule} />
+                  <BidTable schedule={schedule} prices={DA_CLEARED} knowsStateOfCharge={opened.has("asset")} onChange={onScheduleChange} />
                 </div>
               )}
               {isCase2 && (decision === "accept" || decision === "modify") && (

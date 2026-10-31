@@ -214,5 +214,5 @@ if (process.env.NODE_ENV === "production") {
 
 const port = Number(process.env.PORT ?? 8787);
 app.listen(port, () => {
-  console.log(`Gate Closure API on http://localhost:${port} (Claude: ${claudeEnabled() ? MODEL : "offline mode"})`);
+  console.log(`Judgement gym API on http://localhost:${port} (Claude: ${claudeEnabled() ? MODEL : "offline mode"})`);
 });
