@@ -4,6 +4,14 @@
 import express from "express";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+
+// Load .env from the repo root (ANTHROPIC_API_KEY, PORT). Node 22+ built-in;
+// silently skipped when the file does not exist, which is the offline-mode case.
+try {
+  process.loadEnvFile(path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", ".env"));
+} catch {
+  /* no .env: offline mode */
+}
 import { caseById } from "../src/shared/cases";
 import { gradeWithRules } from "../src/shared/scoring";
 import { offlineDraftCase, offlineSeniorTurn } from "../src/shared/offline";
