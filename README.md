@@ -30,6 +30,8 @@ npm run dev                 # web on http://localhost:5173, API on :8787
 
 Without an API key the app runs in **offline mode**: the senior follows a scripted Socratic hint ladder and grading is rule-based. With a key, the senior is a live Claude model (`claude-opus-5-5`) and reasoning quality is graded by Claude on top of the rules. The UI shows which mode is active.
 
+**Test on a phone.** The dev server listens on all interfaces, so with your computer and phone on the same Wi-Fi, open `http://<your-computer's-IP>:5173` on the phone (`ipconfig getifaddr en0` on a Mac, `hostname -I` on Linux). No computer at hand: the `test-mobile` branch publishes a static build to GitHub Pages on every push (enable it once under Settings → Pages → Source: GitHub Actions); with no API server behind it, the browser runs the scripted senior and rule-based grader itself.
+
 ```bash
 npm test          # unit tests: battery simulator, scoring, offline senior
 npm run build     # typecheck + production build

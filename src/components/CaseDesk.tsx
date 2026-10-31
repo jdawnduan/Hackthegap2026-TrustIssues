@@ -181,7 +181,7 @@ export function CaseDesk({ def, onDone }: Props) {
 
   return (
     <div className="stack">
-      <div className="panel row between">
+      <div className="panel row between case-head">
         <div>
           <h1 style={{ marginBottom: 2 }}>{def.title}</h1>
           <small className="muted">{def.clock} · {JUNIOR.name}, week {JUNIOR.currentWeek}</small>
