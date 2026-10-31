@@ -113,6 +113,7 @@ code, .mono { font-size: 14px; }
 /* Shell: navy for brand and navigation */
 .app { display: flex; flex-direction: column; min-height: 100%; }
 .topbar { display: flex; align-items: center; gap: var(--s2); padding: 0 var(--s3); min-height: 56px; background: var(--navy); color: var(--text-on-navy); position: sticky; top: 0; z-index: 10; flex-wrap: wrap; }
+@media (max-width: 900px) { .topbar { position: static; padding: var(--s1) var(--s2); gap: var(--s1); } }
 .brand { font-weight: 700; font-size: 18px; letter-spacing: -0.01em; display: flex; align-items: center; gap: var(--s1); color: var(--text-on-navy); }
 .brand .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); display: inline-block; }
 .nav { display: flex; gap: 4px; margin-left: var(--s1); flex-wrap: wrap; }
@@ -144,6 +145,7 @@ code, .mono { font-size: 14px; }
 .panel.plain { background: transparent; border: 0; padding: var(--s1) 0; }
 .panel.exercise { border-top: 3px solid var(--navy); }
 .panel + .panel { margin-top: var(--s2); }
+.two > .panel + .panel, .three > .panel + .panel, .home-hero > .panel + .panel { margin-top: 0; }
 .grid-desk { display: grid; grid-template-columns: 320px minmax(0, 1fr) 400px; gap: var(--s3); align-items: start; }
 @media (max-width: 1150px) { .grid-desk { grid-template-columns: 1fr; } }
 .stack > * + * { margin-top: var(--s2); }
@@ -195,7 +197,7 @@ table.data td.num, table.data td.mono { font-family: var(--mono); }
 input[type=text], textarea, select { width: 100%; font: inherit; min-height: 44px; padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid var(--grey-2); background: var(--surface); color: var(--text); }
 textarea { resize: vertical; min-height: 72px; }
 input[type=range] { width: 100%; min-height: 44px; accent-color: var(--navy); }
-input.mw { width: 72px; min-height: 36px; text-align: right; padding: 4px 6px; font-size: 14px; }
+input.mw { width: 56px; min-height: 36px; text-align: right; padding: 4px 6px; font-size: 13px; }
 
 /* Buttons: one filled navy primary per view, outlined secondary, 44px */
 .btn { border: 1px solid var(--navy); background: var(--surface); color: var(--navy); min-height: 44px; padding: 10px 16px; border-radius: var(--radius-sm); cursor: pointer; font-weight: 500; font-size: 15px; }
@@ -216,20 +218,20 @@ input.mw { width: 72px; min-height: 36px; text-align: right; padding: 4px 6px; f
 .principle { font-size: 13px; font-weight: 500; color: var(--text-2); }
 
 /* Bid table */
-.bidtable { width: 100%; border-collapse: collapse; font-size: 14px; }
-.bidtable th, .bidtable td { padding: 4px 6px; border-bottom: 1px solid var(--grey); text-align: right; font-variant-numeric: tabular-nums; }
+.bidtable { width: 100%; border-collapse: collapse; font-size: 13px; }
+.bidtable th, .bidtable td { padding: 4px 3px; border-bottom: 1px solid var(--grey); text-align: right; font-variant-numeric: tabular-nums; }
 .bidtable th { color: var(--text-2); font-weight: 600; font-size: 13px; }
 .bidtable td { font-family: var(--mono); }
 .bidtable td:first-child, .bidtable th:first-child { text-align: left; }
 
 /* States and feedback. Colour is always paired with a glyph or a label. */
 .alert { border: 1px solid var(--coral); border-left-width: 3px; background: var(--coral-soft); border-radius: var(--radius-sm); padding: 10px 12px; color: var(--coral-text); font-weight: 500; }
-.alert::before { content: "\26A0\FE0E "; }
+.alert::before { content: "\26A0\FE0E"; margin-right: 6px; }
 .sim { margin-top: var(--s1); padding: 10px 12px; border-radius: var(--radius-sm); background: var(--grey); font-size: 14px; }
 .sim.bad { background: var(--coral-soft); color: var(--coral-text); border: 1px solid var(--coral); }
-.sim.bad strong::before { content: "\2715\FE0E "; }
+.sim.bad strong::before { content: "\2715\FE0E"; margin-right: 6px; }
 .sim.good { background: var(--green-soft); color: var(--green-text); border: 1px solid var(--green); }
-.sim.good strong::before { content: "\2713\FE0E "; }
+.sim.good strong::before { content: "\2713\FE0E"; margin-right: 6px; }
 .pill.good::before { content: "\2713\FE0E"; }
 .pill.bad::before { content: "\2715\FE0E"; }
 
@@ -237,6 +239,7 @@ input.mw { width: 72px; min-height: 36px; text-align: right; padding: 4px 6px; f
 .score-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: var(--s1); }
 .score { padding: 12px var(--s2); border-radius: var(--radius-sm); background: var(--surface); border: 1px solid var(--grey); }
 .score .v { font-size: 24px; font-weight: 600; letter-spacing: -0.01em; margin-top: 2px; color: var(--navy); }
+.score .v.text { font-family: var(--font); font-size: 20px; }
 .bar { height: 6px; background: var(--grey); border-radius: 3px; overflow: hidden; margin-top: var(--s1); }
 .bar i { display: block; height: 100%; background: var(--green); }
 .bigstat { font-size: 28px; font-weight: 600; letter-spacing: -0.01em; color: var(--navy); }
@@ -247,9 +250,9 @@ input.mw { width: 72px; min-height: 36px; text-align: right; padding: 4px 6px; f
 .verdict.bad { background: var(--coral-soft); border-color: var(--coral); }
 .verdict h2 { font-size: 22px; }
 .verdict.good h2 { color: var(--green-text); }
-.verdict.good h2::before { content: "\2713\FE0E "; }
+.verdict.good h2::before { content: "\2713\FE0E"; margin-right: 8px; }
 .verdict.bad h2 { color: var(--coral-text); }
-.verdict.bad h2::before { content: "\2715\FE0E "; }
+.verdict.bad h2::before { content: "\2715\FE0E"; margin-right: 8px; }
 .verdict .pill { background: var(--surface); color: var(--navy); border-color: var(--grey-2); }
 
 /* Milestone / the one lesson: a quiet gold marker */
@@ -271,10 +274,14 @@ ul.clean li { margin: 4px 0; }
 .case-tile.locked { opacity: .6; }
 .audit td, .audit th { font-size: 13px; }
 .flag { color: var(--coral-text); font-weight: 600; }
-.flag::before { content: "\26A0\FE0E "; }
+.flag::before { content: "\26A0\FE0E"; margin-right: 6px; }
 .footer-note { margin-top: var(--s3); display: inline-block; font-size: 13px; font-weight: 500; color: var(--navy); background: var(--grey); border-radius: var(--radius-sm); padding: 6px 10px; max-width: 70ch; }
 .kbd { font-family: var(--mono); font-size: 12px; background: var(--grey); padding: 1px 5px; border-radius: 4px; border: 1px solid var(--grey-2); }
 .firsttake { border: 1px solid var(--grey); border-top: 3px solid var(--navy); padding: var(--s2); border-radius: var(--radius); background: var(--surface); }
 .draft { border: 1px solid var(--grey); border-top: 3px solid var(--navy); border-radius: var(--radius); padding: var(--s2) var(--s3); background: var(--surface); }
 .draft.approved { border-top-color: var(--green); }
 .draft.rejected { opacity: .55; }
+
+/* Chart legends: text in body colour so every series label passes contrast */
+.recharts-legend-item-text { color: var(--text) !important; }
+.recharts-default-legend { font-size: 13px; }

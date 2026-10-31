@@ -25,7 +25,7 @@ export function Profile() {
         <div className="row">
           <div className="score"><small>Traps caught</small><div className="v">{trapsCaught}/{trapsSeen}</div></div>
           <div className="score"><small>Hints per case</small><div className="v">{first.hintsPerCase} → {last.hintsPerCase}</div></div>
-          <div className="score"><small>AI help level</small><div className="v">{last.hintsPerCase > 2 ? "Show me" : last.hintsPerCase > 1 ? "Hint only" : "Check my work"}</div></div>
+          <div className="score"><small>AI help level</small><div className="v text">{last.hintsPerCase > 2 ? "Show me" : last.hintsPerCase > 1 ? "Hint only" : "Check my work"}</div></div>
         </div>
       </div>
 
@@ -37,7 +37,7 @@ export function Profile() {
               <PolarGrid stroke="var(--grey)" />
               <PolarAngleAxis dataKey="skill" tick={{ fill: "var(--text-2)", fontSize: 12 }} />
               <PolarRadiusAxis domain={[0, 100]} tick={false} axisLine={false} />
-              <Radar name={`Week ${first.week}`} dataKey={`Week ${first.week}`} stroke="var(--grey-2)" fill="var(--grey-2)" fillOpacity={0.35} isAnimationActive={false} />
+              <Radar name={`Week ${first.week}`} dataKey={`Week ${first.week}`} stroke="var(--text-2)" fill="var(--grey-2)" fillOpacity={0.5} isAnimationActive={false} />
               <Radar name={`Week ${last.week}`} dataKey={`Week ${last.week}`} stroke="var(--navy)" fill="var(--navy)" fillOpacity={0.25} isAnimationActive={false} />
               <Legend />
             </RadarChart>
@@ -70,12 +70,12 @@ export function Profile() {
         <ResponsiveContainer width="100%" height={260}>
           <LineChart data={trend} margin={{ top: 8, right: 12, left: -10, bottom: 0 }}>
             <CartesianGrid stroke="var(--grey)" />
-            <XAxis dataKey="week" stroke="var(--text-2)" tick={{ fill: "var(--text-2)", fontFamily: "var(--mono)", fontSize: 12 }} label={{ value: "Week", position: "insideBottomRight", offset: -4, fill: "var(--text-2)", fontSize: 12 }} />
+            <XAxis dataKey="week" stroke="var(--text-2)" tick={{ fill: "var(--text-2)", fontFamily: "var(--mono)", fontSize: 12 }} />
             <YAxis domain={[0, 100]} stroke="var(--text-2)" tick={{ fill: "var(--text-2)", fontFamily: "var(--mono)", fontSize: 12 }} label={{ value: "Score (0–100)", angle: -90, position: "insideLeft", fill: "var(--text-2)", fontSize: 12 }} />
             <Tooltip />
             <Legend />
             {SUBSKILLS.map((s, i) => (
-              <Line key={s.id} dataKey={s.short} stroke={["var(--navy)", "var(--green)", "var(--gold)", "var(--text-2)", "var(--grey-2)", "var(--coral)"][i]} dot={false} strokeWidth={s.id === "ai_judgement" ? 3 : 1.5} isAnimationActive={false} />
+              <Line key={s.id} dataKey={s.short} stroke={["var(--text-2)", "var(--green)", "var(--gold)", "var(--grey-2)", "var(--navy)", "var(--coral)"][i]} dot={false} strokeWidth={s.id === "ai_judgement" ? 3 : 1.5} isAnimationActive={false} />
             ))}
           </LineChart>
         </ResponsiveContainer>
