@@ -222,7 +222,15 @@ export interface DraftCase {
   rubric: string[];
   status: "draft" | "approved" | "rejected";
   approvedBy?: string;
+  approvedAt?: string;
   draftedBy: "claude" | "template";
+  /** Full case setup, filled in before a junior can see the case. */
+  seniorNotes?: string;
+  hints?: string[];
+  challengeQuestions?: string[];
+  countdownSec?: number;
+  acceptableDecisions?: Decision[];
+  dataSources?: { label: string; url: string }[];
 }
 
 export interface ReplayItem {

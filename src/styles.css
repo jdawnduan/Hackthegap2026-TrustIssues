@@ -211,3 +211,9 @@ ul.clean li { margin: 3px 0; }
 .case-tile.upcoming h3 { font-size: 13.5px; }
 .case-tile.upcoming p { font-size: 12.5px; }
 .case-tile.locked { opacity: .55; filter: grayscale(.4); }
+
+/* Approved debrief case on the dashboard */
+.case-tile.approved-draft { border-color: var(--good); }
+.modal.setup label.muted { display: block; margin-top: 8px; margin-bottom: 2px; font-size: 12px; font-weight: 600; }
+.modal.setup .panel + .panel { margin-top: 12px; }
+.modal.setup .pill input { margin: 0 2px 0 0; }

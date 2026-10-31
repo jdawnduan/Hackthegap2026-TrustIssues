@@ -35,6 +35,7 @@ export function App() {
     setView("case");
   };
   const done1 = app.results.some((r) => r.caseId === CASE1.id);
+  const done2 = app.results.some((r) => r.caseId === CASE2.id);
   const nav = app.role === "junior" ? JUNIOR_NAV : SENIOR_NAV;
   const toggleRole = () => {
     const role = app.role === "junior" ? "senior" : "junior";
@@ -89,6 +90,16 @@ export function App() {
                   </div>
                 );
               })}
+              {app.drafts.filter((d) => d.status === "approved").map((d) => (
+                <div key={d.id} className={`case-tile approved-draft ${done2 ? "" : "locked"}`}>
+                  <div className="row between"><h3 style={{ margin: 0 }}>Case 3 · {d.title}</h3><small className="mono muted">added {d.approvedAt ? new Date(d.approvedAt).toLocaleTimeString() : "today"}</small></div>
+                  <p className="muted" style={{ margin: 0 }}>{d.brief.replace(/\s*\[check:[^\]]*\]/g, "")}</p>
+                  <div className="row between">
+                    <small>{Math.round((d.countdownSec ?? 300) / 60)} min · <span className="pill good">new · from a desk debrief</span> <span className="pill">approved by {d.approvedBy}</span></small>
+                    <button className="btn primary sm" disabled title={done2 ? "Scenario data is being prepared for this case" : "Unlocks after Case 2"}>{done2 ? "Coming up" : "Play Case 2 first"}</button>
+                  </div>
+                </div>
+              ))}
               {UPCOMING_CASES.map((u) => {
                 const prereqDone = app.results.some((r) => r.caseId === u.unlocksAfter);
                 return (
