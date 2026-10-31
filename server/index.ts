@@ -2,12 +2,27 @@
 // Falls back to offline logic when no Claude credentials are configured.
 
 import express from "express";
+import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { caseById } from "../src/shared/cases";
+import { gradeWithRules } from "../src/shared/scoring";
+import { offlineDraftCase, offlineSeniorTurn } from "../src/shared/offline";
+import type { CaseResult, ChatMessage, DraftCase, Schedule, Submission, TabOpen } from "../src/shared/types";
+import { askClaudeJSON, claudeEnabled, ClaudeUnavailable, MODEL } from "./claude";
+import {
+  caseContext,
+  DRAFT_SCHEMA,
+  DRAFT_SYSTEM,
+  GRADER_SCHEMA,
+  GRADER_SYSTEM,
+  SENIOR_SCHEMA,
+  SENIOR_SYSTEM,
+  tabLogText,
+} from "./prompts";
 
 // Load .env from the repo root (ANTHROPIC_API_KEY, PORT). Own tiny parser so it
 // works on any Node version; existing environment variables win over the file.
-import fs from "node:fs";
 const envPath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", ".env");
 if (fs.existsSync(envPath)) {
   let loaded = 0;
