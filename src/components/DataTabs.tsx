@@ -1,4 +1,4 @@
-import { useState } from "react";
+import type React from "react";
 import { Area, CartesianGrid, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { hh, NET_POSITION_GW } from "../shared/market";
 import type { BatteryStatus, BorderCapacity, HourPoint, NewsItem, Schedule, TabId } from "../shared/types";
@@ -19,14 +19,22 @@ interface Props {
   opened: Set<TabId>;
   urgent?: TabId[];
   onOpen: (tab: TabId) => void;
+  /** Controlled active tab (so the same tab stays open when the panel is expanded to full screen). */
+  active: TabId | null;
+  onActive: (tab: TabId) => void;
+  /** Taller charts and tables for the full-screen view. */
+  tall?: boolean;
+  /** Rendered at the right end of the tab strip (the expand / close button). */
+  corner?: React.ReactNode;
 }
 
-export function DataTabs({ tabs, data, opened, urgent = [], onOpen }: Props) {
-  const [active, setActive] = useState<TabId | null>(null);
+export function DataTabs({ tabs, data, opened, urgent = [], onOpen, active, onActive, tall = false, corner }: Props) {
   const open = (t: TabId) => {
-    setActive(t);
+    onActive(t);
     onOpen(t);
   };
+  const h = (base: number) => (tall ? Math.round(base * 1.9) : base);
+  const scrollMax = tall ? 520 : undefined;
   return (
     <div>
       <div className="tabs">
@@ -37,11 +45,12 @@ export function DataTabs({ tabs, data, opened, urgent = [], onOpen }: Props) {
             {opened.has(t) && <span className="seen" title="opened" />}
           </button>
         ))}
+        {corner && <span className="tabs-corner">{corner}</span>}
       </div>
       {active === null && <p className="muted">Open a tab to look at the data. Every tab you open is logged; that is part of how your judgement is scored.</p>}
-      {active === "prices" && <Prices f={data.forecast} />}
-      {active === "residual" && <Residual f={data.forecast} />}
-      {active === "weather" && <Weather f={data.forecast} />}
+      {active === "prices" && <Prices f={data.forecast} h={h} scrollMax={scrollMax} />}
+      {active === "residual" && <Residual f={data.forecast} h={h} />}
+      {active === "weather" && <Weather f={data.forecast} h={h} scrollMax={scrollMax} />}
       {active === "asset" && <Asset b={data.battery} />}
       {active === "borders" && <Borders b={data.borders} />}
       {active === "news" && <News n={data.news} />}
@@ -52,11 +61,13 @@ export function DataTabs({ tabs, data, opened, urgent = [], onOpen }: Props) {
 
 const tick = (h: number) => hh(h).slice(0, 2);
 
-function Prices({ f }: { f: HourPoint[] }) {
+type Sizing = { h: (base: number) => number; scrollMax?: number };
+
+function Prices({ f, h, scrollMax }: { f: HourPoint[] } & Sizing) {
   return (
     <div>
       <h4>Day-ahead price forecast, DE-LU, tomorrow (EUR/MWh)</h4>
-      <ResponsiveContainer width="100%" height={220}>
+      <ResponsiveContainer width="100%" height={h(220)}>
         <ComposedChart data={f} margin={{ top: 8, right: 12, left: -10, bottom: 0 }}>
           <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" />
           <XAxis dataKey="hour" tickFormatter={tick} stroke="var(--muted)" />
@@ -65,7 +76,7 @@ function Prices({ f }: { f: HourPoint[] }) {
           <Area dataKey="price" stroke="var(--accent)" fill="var(--accent-soft)" type="monotone" />
         </ComposedChart>
       </ResponsiveContainer>
-      <div className="scroll" style={{ maxHeight: 200 }}>
+      <div className="scroll" style={{ maxHeight: scrollMax ?? 200 }}>
         <table className="data">
           <thead><tr><th>Hour</th><th>Price</th><th>Hour</th><th>Price</th></tr></thead>
           <tbody>
@@ -82,11 +93,11 @@ function Prices({ f }: { f: HourPoint[] }) {
   );
 }
 
-function Residual({ f }: { f: HourPoint[] }) {
+function Residual({ f, h }: { f: HourPoint[] } & Sizing) {
   return (
     <div>
       <h4>Residual load = load − solar − wind (GW), DE, tomorrow</h4>
-      <ResponsiveContainer width="100%" height={240}>
+      <ResponsiveContainer width="100%" height={h(240)}>
         <ComposedChart data={f} margin={{ top: 8, right: 12, left: -10, bottom: 0 }}>
           <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" />
           <XAxis dataKey="hour" tickFormatter={tick} stroke="var(--muted)" />
@@ -103,11 +114,11 @@ function Residual({ f }: { f: HourPoint[] }) {
   );
 }
 
-function Weather({ f }: { f: HourPoint[] }) {
+function Weather({ f, h, scrollMax }: { f: HourPoint[] } & Sizing) {
   return (
     <div>
       <h4>Weather, southern Germany, tomorrow</h4>
-      <ResponsiveContainer width="100%" height={200}>
+      <ResponsiveContainer width="100%" height={h(200)}>
         <ComposedChart data={f} margin={{ top: 8, right: 12, left: -10, bottom: 0 }}>
           <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" />
           <XAxis dataKey="hour" tickFormatter={tick} stroke="var(--muted)" />
@@ -119,7 +130,7 @@ function Weather({ f }: { f: HourPoint[] }) {
           <Line yAxisId="r" dataKey="temp" name="Temp °C" stroke="var(--bad)" dot={false} type="monotone" />
         </ComposedChart>
       </ResponsiveContainer>
-      <div className="scroll" style={{ maxHeight: 170 }}>
+      <div className="scroll" style={{ maxHeight: scrollMax ?? 170 }}>
         <table className="data">
           <thead><tr><th>Hour</th><th>Cloud %</th><th>Solar GW</th><th>Temp °C</th></tr></thead>
           <tbody>{f.map((p) => <tr key={p.hour}><td>{hh(p.hour)}</td><td>{p.cloud}</td><td>{p.solar}</td><td>{p.temp}</td></tr>)}</tbody>

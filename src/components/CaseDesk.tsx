@@ -74,6 +74,14 @@ export function CaseDesk({ def, onDone }: Props) {
   const [firstTake, setFirstTake] = useState("");
   const [tabOpens, setTabOpens] = useState<TabOpen[]>([]);
   const opened = useMemo(() => new Set(tabOpens.map((t) => t.tab)), [tabOpens]);
+  const [activeTab, setActiveTab] = useState<TabId | null>(null);
+  const [expanded, setExpanded] = useState(false);
+  useEffect(() => {
+    if (!expanded) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setExpanded(false);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [expanded]);
   const logOpen = (tab: TabId) => {
     log("tab_opened", TAB_LABELS[tab]);
     setTabOpens((prev) => (prev.some((t) => t.tab === tab) ? prev : [...prev, { tab, atSec: Math.floor((Date.now() - startRef.current) / 1000) }]));
@@ -217,8 +225,37 @@ export function CaseDesk({ def, onDone }: Props) {
 
           {/* Centre: data */}
           <div className="panel">
-            <DataTabs tabs={tabs} data={tabData} opened={opened} urgent={c2?.needsCleanup ? ["auction"] : []} onOpen={logOpen} />
+            {!expanded && (
+              <DataTabs
+                tabs={tabs}
+                data={tabData}
+                opened={opened}
+                urgent={c2?.needsCleanup ? ["auction"] : []}
+                onOpen={logOpen}
+                active={activeTab}
+                onActive={setActiveTab}
+                corner={<button className="btn sm expand" onClick={() => setExpanded(true)} title="Expand the data to full screen (Esc to close)" aria-label="Expand data to full screen">⤢ Expand</button>}
+              />
+            )}
+            {expanded && <p className="muted" style={{ margin: 0 }}>Data is open in full screen. Press Esc or Close to return.</p>}
           </div>
+          {expanded && (
+            <div className="overlay" onClick={() => setExpanded(false)} role="dialog" aria-modal="true" aria-label="Market data, full screen">
+              <div className="modal wide" onClick={(e) => e.stopPropagation()}>
+                <DataTabs
+                  tabs={tabs}
+                  data={tabData}
+                  opened={opened}
+                  urgent={c2?.needsCleanup ? ["auction"] : []}
+                  onOpen={logOpen}
+                  active={activeTab}
+                  onActive={setActiveTab}
+                  tall
+                  corner={<button className="btn sm expand" onClick={() => setExpanded(false)} title="Back to the case desk (Esc)" aria-label="Close full screen">⤡ Close</button>}
+                />
+              </div>
+            </div>
+          )}
 
           {/* Right: senior + decision (locked until the junior has given a first take) */}
           <div className="stack">
