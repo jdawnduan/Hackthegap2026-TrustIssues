@@ -51,6 +51,7 @@ export function App() {
           <div className="home-hero">
             <div className="panel">
               <h1>A judgement gym for junior energy traders</h1>
+              <p className="principle" style={{ marginBottom: 12 }}>AI recommends. Human decides.</p>
               <p>{JUNIOR.name} is {JUNIOR.currentWeek} weeks into Alpiq's short-term desk. Every case gives her an AI copilot's recommendation under a gate-closure countdown. Sometimes the copilot is wrong. Her job is to find out which, and to say what she checked.</p>
               <p className="muted">Today's two cases are one trading day: the morning bid for a battery, then the afternoon intraday preparation. The second case starts from whatever position the first one created.</p>
               <ul className="clean">

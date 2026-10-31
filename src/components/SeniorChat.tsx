@@ -10,9 +10,11 @@ interface Props {
 
 export function SeniorChat({ chat, busy, source, onSend }: Props) {
   const [text, setText] = useState("");
-  const endRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: "smooth" });
+    // Scroll the chat list itself, never the page: the page must not jump under the sticky header.
+    const el = listRef.current;
+    if (el) el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
   }, [chat.length, busy]);
 
   const send = () => {
@@ -28,7 +30,7 @@ export function SeniorChat({ chat, busy, source, onSend }: Props) {
         <h3 style={{ margin: 0 }}>Senior trader <span className="pill senior">AI coach</span></h3>
         {source && <small className="muted">{source === "claude" ? "live" : "offline script"}</small>}
       </div>
-      <div className="chat">
+      <div className="chat" ref={listRef}>
         {chat.length === 0 && <small className="muted">The senior will challenge your reasoning. They will not give you the answer. Say what you think and why.</small>}
         {chat.map((m, i) => (
           <div key={i} className={`bubble ${m.role}`}>
@@ -37,7 +39,6 @@ export function SeniorChat({ chat, busy, source, onSend }: Props) {
           </div>
         ))}
         {busy && <div className="bubble senior muted">…</div>}
-        <div ref={endRef} />
       </div>
       <div className="chat-input">
         <input

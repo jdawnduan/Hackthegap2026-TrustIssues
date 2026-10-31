@@ -181,7 +181,7 @@ export function CaseDesk({ def, onDone }: Props) {
               {c2?.needsCleanup && <div className="alert">{c2.cleanupNote}</div>}
             </div>
             <div className="card-copilot">
-              <div className="row between"><strong>AI copilot</strong><span className="pill copilot">recommendation</span></div>
+              <div className="row between"><strong style={{ color: "var(--copilot)" }}>AI copilot</strong><span className="pill copilot">recommendation</span></div>
               <h3 style={{ marginTop: 6 }}>{copilot.headline}</h3>
               <p>{copilot.body}</p>
               {copilot.expectedMarginEUR !== undefined && <p><strong>Expected margin:</strong> EUR {copilot.expectedMarginEUR.toLocaleString("en-US")}</p>}
@@ -200,7 +200,7 @@ export function CaseDesk({ def, onDone }: Props) {
               <SeniorChat chat={chat} busy={busy} source={source} onSend={onSend} />
             </div>
             <div className="panel">
-              <h3>Your decision</h3>
+              <div className="row between" style={{ marginBottom: 8 }}><h3 style={{ margin: 0 }}>Your decision</h3><span className="principle">AI recommends. You decide.</span></div>
               <div className="decisions">
                 {(["accept", "modify", "reject", "escalate"] as Decision[]).map((d) => (
                   <button key={d} className={decision === d ? "sel" : ""} onClick={() => setDecision(d)}>{label(d)}</button>
