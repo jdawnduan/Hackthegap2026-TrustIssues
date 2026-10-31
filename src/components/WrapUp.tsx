@@ -44,9 +44,10 @@ const ROWS: { criterion: string; weight: string; how: string[] }[] = [
     criterion: "Honesty about limits",
     weight: "10%",
     how: [
-      "Juniors can learn to beat the gym instead of the market: traps must rotate and come from real desk debriefs.",
-      "Gamification can reward speed; we score evidence and calibration, never speed.",
-      "The AI senior can leak the answer or carry its own blind spots; hints are counted and seniors review transcripts.",
+      "It costs senior time. The run logs and the debrief inbox only work if senior traders actually read the logs and approve the drafted cases; the desk has to budget that time or oversight becomes a formality.",
+      "The gym can go stale. With a handful of cases, juniors learn its patterns (\"always check the asset\") rather than judgement. The debrief loop keeps real mistakes flowing in, but only if it is used every week.",
+      "The timer is a double-edged tool. We never reward speed (missing gate closure costs points; fast approvals with little evidence are flagged), but a countdown still nudges people to hurry.",
+      "The AI senior is an LLM. It can hint too early, leak the answer, or pass on its own blind spots, so a junior may learn the coach's habits. Hint levels are counted and transcripts are reviewable, which limits but does not remove this.",
     ],
   },
 ];

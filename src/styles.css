@@ -167,8 +167,6 @@ ul.clean li { margin: 3px 0; }
 .avatar:hover { background: var(--panel-2); }
 .avatar .initial { width: 26px; height: 26px; border-radius: 50%; display: inline-grid; place-items: center; color: #fff; background: var(--accent); font-size: 13px; }
 .avatar.senior .initial { background: var(--senior); }
-.nav button.wrap { color: var(--muted); border: 1px dashed var(--border); margin-left: 6px; }
-.nav button.wrap.active { background: var(--panel-2); color: var(--text); }
 
 /* ⋯ menu button */
 .btn.more { padding: 2px 8px; font-size: 16px; line-height: 1; letter-spacing: 1px; }
@@ -203,3 +201,13 @@ ul.clean li { margin: 3px 0; }
 .btn.expand { font-size: 12.5px; }
 .modal.wide { width: min(1400px, 100%); max-height: calc(100vh - 32px); padding: 14px 20px 20px; }
 .overlay:has(.modal.wide) { padding: 16px; align-items: stretch; }
+
+/* Wrap-up lives on the right of the header: part of the pitch, not of either dashboard */
+.btn.wrapbtn { border-style: dashed; color: var(--muted); }
+.btn.wrapbtn.active { background: var(--panel-2); color: var(--text); border-style: solid; }
+
+/* Upcoming cases: visible but locked */
+.case-tile.upcoming { padding: 10px 14px; gap: 4px; }
+.case-tile.upcoming h3 { font-size: 13.5px; }
+.case-tile.upcoming p { font-size: 12.5px; }
+.case-tile.locked { opacity: .55; filter: grayscale(.4); }

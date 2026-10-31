@@ -7,7 +7,7 @@ import { Debrief } from "./components/Debrief";
 import { DebriefInbox } from "./components/DebriefInbox";
 import { Profile } from "./components/Profile";
 import { SeniorDashboard } from "./components/SeniorDashboard";
-import { CASE1, CASE2, CASES } from "./shared/cases";
+import { CASE1, CASE2, CASES, UPCOMING_CASES } from "./shared/cases";
 import { JUNIOR } from "./shared/history";
 import type { CaseDefinition, CaseResult } from "./shared/types";
 import { setState, useAppState } from "./state/store";
@@ -50,9 +50,9 @@ export function App() {
           {nav.map(([v, l]) => (
             <button key={v} className={view === v || (v === "home" && (view === "case" || view === "debrief")) ? "active" : ""} onClick={() => setView(v)}>{l}</button>
           ))}
-          <button className={`wrap ${view === "wrapup" ? "active" : ""}`} onClick={() => setView("wrapup")}>Wrap-up</button>
         </nav>
         <div className="spacer" />
+        <button className={`btn sm wrapbtn ${view === "wrapup" ? "active" : ""}`} onClick={() => setView("wrapup")}>Wrap-up</button>
         {health && <span className={`pill ${health.claude ? "good" : "warn"}`} title={health.claude ? `Senior and grader run on ${health.model}` : "No ANTHROPIC_API_KEY: scripted senior, rule-based grading"}>{health.claude ? "AI live" : "offline mode"}</span>}
         <span className="pill accent">Team Trust Issues</span>
         <button className={`avatar ${app.role}`} onClick={toggleRole} title={app.role === "junior" ? `${JUNIOR.name}, junior trader · switch to the senior view` : "Senior trader · switch to the junior view"} aria-label="Switch role">
@@ -85,6 +85,19 @@ export function App() {
                     <div className="row between">
                       <small>{Math.round(c.countdownSec / 60)} min · {result ? <span className={`pill ${result.correct ? "good" : "bad"}`}>{result.correct ? "passed" : "failed"} · {result.overall}</span> : locked ? <span className="pill">play Case 1 first</span> : <span className="pill accent">ready</span>}</small>
                       <button className="btn primary sm" disabled={locked} onClick={() => startCase(c)}>{result ? "Replay" : "Start"}</button>
+                    </div>
+                  </div>
+                );
+              })}
+              {UPCOMING_CASES.map((u) => {
+                const prereqDone = app.results.some((r) => r.caseId === u.unlocksAfter);
+                return (
+                  <div key={u.id} className={`case-tile upcoming ${prereqDone ? "" : "locked"}`}>
+                    <div className="row between"><h3 style={{ margin: 0 }}>{u.title}</h3><small className="mono muted">{u.clock}</small></div>
+                    <p className="muted" style={{ margin: 0 }}>{u.brief}</p>
+                    <div className="row between">
+                      <small>{u.minutes} min · <span className="pill">{prereqDone ? "next up" : "locked"}</span> <span className="pill senior">{u.tag}</span></small>
+                      <button className="btn sm" disabled title={prereqDone ? "Not included in this prototype" : `Unlocks after ${CASES.concat().find((c) => c.id === u.unlocksAfter)?.title.split(" · ")[0] ?? "the previous case"}`}>Locked</button>
                     </div>
                   </div>
                 );

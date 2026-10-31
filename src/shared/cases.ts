@@ -100,6 +100,65 @@ export const CASE2: CaseDefinition = {
 
 export const CASES = [CASE1, CASE2];
 
+/** Cases queued after today's two. Shown locked on the junior's dashboard; not playable in this prototype. */
+export interface UpcomingCase {
+  id: string;
+  title: string;
+  clock: string;
+  brief: string;
+  minutes: number;
+  unlocksAfter: string; // case id
+  tag: string;
+}
+
+export const UPCOMING_CASES: UpcomingCase[] = [
+  {
+    id: "c3-reservoir-water-value",
+    title: "Case 3 · Hydro reservoir: sell the water now?",
+    clock: "Week 10 · replay of 'check your own book'",
+    brief: "Spring prices are high and the copilot wants to sell reservoir energy this week. The reservoir is nearly full and inflows are rising, but winter supply has a value too.",
+    minutes: 5,
+    unlocksAfter: "c2-intraday-prep",
+    tag: "replay",
+  },
+  {
+    id: "c4-ch-it-spread",
+    title: "Case 4 · CH → IT spread",
+    clock: "Week 10 · cross-border",
+    brief: "The Italian price is far above the Swiss one and the copilot sees a spread trade. Check whether there is any capacity left on the border before you can move the power.",
+    minutes: 4,
+    unlocksAfter: "c3-reservoir-water-value",
+    tag: "new",
+  },
+  {
+    id: "c5-gas-spark-spread",
+    title: "Case 5 · Gas plant: run tomorrow or not?",
+    clock: "Week 11 · asset dispatch",
+    brief: "The copilot recommends running the CCGT through the evening peak. Work out the clean spark spread with tomorrow's gas and CO₂ prices before you agree.",
+    minutes: 5,
+    unlocksAfter: "c4-ch-it-spread",
+    tag: "new",
+  },
+  {
+    id: "c6-storm-week",
+    title: "Case 6 · Storm week: 8 GW wind swing",
+    clock: "Week 11 · rare case",
+    brief: "Two hours before gate closure the German wind forecast swings by 8 GW. The copilot sizes a large trade on the old forecast. Decide what to do and who needs to know.",
+    minutes: 4,
+    unlocksAfter: "c5-gas-spark-spread",
+    tag: "rare",
+  },
+  {
+    id: "c7-regulation-change",
+    title: "Case 7 · The rule changed",
+    clock: "Week 12 · from the desk debrief",
+    brief: "A balancing product the desk has traded profitably for years was redefined last month. The copilot follows last year's playbook. Spot what changed before you sign off.",
+    minutes: 5,
+    unlocksAfter: "c6-storm-week",
+    tag: "from debrief",
+  },
+];
+
 export function caseById(id: string): CaseDefinition | undefined {
   return CASES.find((c) => c.id === id);
 }
