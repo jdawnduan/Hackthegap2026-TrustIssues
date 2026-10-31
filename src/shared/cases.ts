@@ -70,30 +70,30 @@ export const CASE2: CaseDefinition = {
   aiIsCorrect: true,
   acceptableDecisions: ["accept", "modify"],
   bestDecisions: ["accept"],
-  keyTabs: ["weather", "prices", "news"],
+  keyTabs: ["weather", "prices", "news", "borders"],
   trapDescription:
-    "No trap: the copilot is right, and the right call is to hold. A cloud band cuts German solar by about 6 GW from 13:00 to 16:00, lifting intraday indications by ~40 EUR in those hours. But the midday trough is ~200 EUR deep, so 13:00 is still ~160 EUR cheaper than 11:00 and moving the charging would cost about EUR 8k. The French nuclear headline is a red herring: French baseload, and the FR→DE border is fully allocated.",
+    "No trap: the copilot is right, and the right call is to hold. A cloud band cuts German solar by about 6 GW from 13:00 to 16:00, lifting intraday indications by ~40 EUR in those hours. But the midday trough is ~200 EUR deep, so 13:00 is still ~160 EUR cheaper than 11:00 and moving the charging would cost about EUR 8k. The Flamanville 3 headline is a real ENTSO-E notice and a red herring: the reactor only returns after midnight Monday, France sits behind flow-based coupling (no fixed FR–DE capacity), and Germany is exporting ~12 GW at midday, so French supply is not what sets Sunday-afternoon German prices.",
   seniorHiddenNotes:
-    "The copilot is correct: hold, set an alert on the 18:00 update, and only sell the 13:00 block back above a limit. Good juniors verify the cloud band in an independent source (Weather & solar tab: cloud cover 70–80% from 13:00, solar down ~6 GW), check the price tab to see that 13:00 (-250 cleared, -210 indicated) is still far cheaper than 11:00 (-52), dismiss the French nuclear news (baseload in France, FR→DE border has 0 MW available), and accept with a price limit and an unwind condition. A junior who was burned in Case 1 is tempted to distrust everything and 'do something': re-shifting the charging (Reject) costs about EUR 8k. If the junior's Case 1 position overfilled the battery, they must also deal with the excess.",
+    "The copilot is correct: hold, set an alert on the 18:00 update, and only sell the 13:00 block back above a limit. Good juniors verify the cloud band in an independent source (Weather & solar tab: cloud cover 70–80% from 13:00, solar down ~6 GW), check the price tab to see that 13:00 (-250 cleared, -210 indicated) is still far cheaper than 11:00 (-52), dismiss the Flamanville 3 news (it takes effect 00:00 Monday, after the window; FR–DE is flow-based so there is no border capacity to 'fill'; Germany is a net exporter of ~12 GW at midday, so extra French supply is not the constraint), and accept with a price limit and an unwind condition. A junior who was burned in Case 1 is tempted to distrust everything and 'do something': re-shifting the charging (Reject) costs about EUR 8k. If the junior's Case 1 position overfilled the battery, they must also deal with the excess.",
   hints: [
     { level: 1, text: "The copilot sounds confident again. What would make it wrong this time?" },
     { level: 2, text: "Can you confirm the cloud band from a source other than the copilot's note, and what does a 40 EUR lift do to a 200 EUR trough?" },
-    { level: 3, text: "Open Weather & solar and Prices. Compare 11:00 with 13:00 after the uplift. Then look at the News and ask whether a French unit changes German afternoon prices." },
+    { level: 3, text: "Open Weather & solar and Prices. Compare 11:00 with 13:00 after the uplift. Then look at News and Borders: when does Flamanville return, and is Germany importing or exporting at midday?" },
   ],
   challengeQuestions: [
     "What would make the AI wrong here?",
     "What would it cost to move the 13:00 block to 11:00?",
-    "Does the French nuclear headline change your view? Why or why not?",
+    "Does the Flamanville headline change your view? When does it take effect, and which way is power flowing at midday?",
     "At what indication would you sell the 13:00 block back, and what would make you unwind tomorrow morning?",
   ],
   lesson: "Trust the AI when the evidence agrees, and resist the urge to act just because you were burned.",
   seniorWouldHaveChecked: [
     "Weather & solar: cloud cover 70–80% from 13:00, solar down ~6 GW",
     "Prices: 13:00 still ~160 EUR cheaper than 11:00 after the uplift, so re-shifting costs money",
-    "News + Borders: French nuclear return is baseload in France; FR→DE border has 0 MW available",
+    "News + Borders: Flamanville 3 only returns at 00:00 Monday; FR–DE is flow-based; Germany exports ~12 GW at midday",
   ],
   driverKeywords: ["cloud", "solar", "residual", "front", "band", "weather", "hold", "trough", "cheaper", "cost", "160", "8k", "8,000"],
-  newsKeywords: ["baseload", "border", "france", "french", "fr", "allocated", "irrelevant", "not relevant", "doesn't", "does not", "noise", "red herring"],
+  newsKeywords: ["monday", "midnight", "00:00", "after", "flow-based", "flow based", "core", "export", "exporting", "surplus", "france", "french", "flamanville", "baseload", "irrelevant", "not relevant", "doesn't", "does not", "noise", "red herring", "not the constraint"],
   showsNews: true,
   usesBidTable: false,
 };

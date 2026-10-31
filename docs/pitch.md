@@ -15,7 +15,7 @@ The ladder gets shorter: the AI does the work that used to teach the job. The se
 ## 1:00 Live demo: Mia's day (2 min 30)
 
 - **Case 1, 09:30.** Battery bid for Sunday 11 May 2025, a real day when German prices hit −250 EUR/MWh. The copilot's story is perfect: record solar, we get paid to charge at noon, sell into the evening peak. The senior asks: "Where would the 100 MWh physically go?" Mia doesn't check the asset. She accepts. *Debrief:* the battery was 80 % full after yesterday's curtailment. 80 MWh had nowhere to go. "Check your own book before you trust a market story."
-- **Case 2, 15:00.** Her flawed position is now live: urgent clean-up and a loss on screen. New copilot proposal: a cloud band lifts afternoon prices, but not enough to move the charging, so hold. Burned once, the temptation is to distrust it and 'do something'. The gym scores that as a failure too: re-shifting would cost EUR 8k. She checks the weather tab, compares 11:00 with 13:00, dismisses the French nuclear headline (baseload, border full), and holds with a limit and an unwind rule.
+- **Case 2, 15:00.** Her flawed position is now live: urgent clean-up and a loss on screen. New copilot proposal: a cloud band lifts afternoon prices, but not enough to move the charging, so hold. Burned once, the temptation is to distrust it and 'do something'. The gym scores that as a failure too: re-shifting would cost EUR 8k. She checks the weather tab, compares 11:00 with 13:00, dismisses the Flamanville 3 headline (returns Monday, flow-based border, Germany is exporting), and holds with a limit and an unwind rule.
 - **Profile.** Week 1 vs week 8 radar, calibration table, hints per case falling, the missed lesson queued to come back as a hydro reservoir case.
 - **Senior dashboard.** Every decision: what the AI said, what Mia decided, what she opened, who is accountable. Rubber-stamp flags.
 - **Debrief inbox.** Paste a real desk debrief, the AI drafts the next case, a senior approves it.
@@ -41,6 +41,6 @@ A second risk we name: the AI senior can leak the answer or carry its own blind 
 ### Backup slides / likely questions
 
 - **Why trading, not asset management?** Natural time pressure and messy public data; it is Alpiq's core business. The architecture (cases, copilot script, senior, rubric) is domain-agnostic.
-- **Is the data real?** The market day is: Sunday 11 May 2025, when German residual load went negative at midday and day-ahead cleared at −250 EUR/MWh (Energy-Charts / SMARD, Open-Meteo). The battery, curtailment, the afternoon cloud update, intraday indications and news are invented.
+- **Is the data real?** The market day is: Sunday 11 May 2025, when German residual load went negative at midday and day-ahead cleared at −250 EUR/MWh (Energy-Charts / SMARD, Open-Meteo), plus real ENTSO-E border capacities and the real Flamanville 3 outage notice. The battery, curtailment, the afternoon cloud update, intraday indications and the other headlines are invented.
 - **What's offline vs. live?** Without an API key: scripted senior and rule-based grading. With one: live senior and LLM-graded reasoning, blended 50/50 with the rules.
 - **How does help fade?** The hint ladder only climbs while key evidence is unopened; hints are penalised; countdowns shorten and traps get subtler as sub-skills pass 70.

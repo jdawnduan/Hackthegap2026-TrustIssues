@@ -7,6 +7,8 @@
 |---|---|---|
 | [Energy-Charts API](https://api.energy-charts.info), Fraunhofer ISE | CC BY 4.0 | Day-ahead prices, load, solar, wind (DE-LU) |
 | [Open-Meteo](https://open-meteo.com) historical API | CC BY 4.0 | Hourly cloud cover and temperature, southern Germany |
-| [ENTSO-E Transparency Platform](https://transparency.entsoe.eu) | ENTSO-E terms; API token required | Outages, cross-border capacity (not fetched yet) |
+| [ENTSO-E Transparency Platform](https://transparency.entsoe.eu) | ENTSO-E terms, reuse with attribution; GUI CSV export after free sign-in | Day-ahead forecast transfer capacities on the DE-LU borders; French generation-unit unavailability (the Flamanville 3 notice) → `src/shared/entsoe.json` |
 
-Invented for the cases: the battery, its state of charge and curtailment note, the afternoon cloud-band forecast update (the real day stayed cloudless), intraday price indications, border capacities and the news feed.
+Also real: Germany's hourly net position (Energy-Charts cross-border trading series; it exported up to 12.2 GW at 14:00).
+
+Invented for the cases: the battery, its state of charge and curtailment note, the afternoon cloud-band forecast update (the real day stayed cloudless), intraday price indications, and the news headlines other than the Flamanville 3 item.

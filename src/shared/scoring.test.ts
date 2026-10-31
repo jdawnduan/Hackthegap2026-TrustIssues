@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { buildCase2Context, CASE1, CASE2, clearedPositionFromCase1, COPILOT_CASE1 } from "./cases";
-import { COPILOT_CASE1_SCHEDULE, DA_CLEARED, REFERENCE_CASE1_SCHEDULE, simulateBattery } from "./market";
+import { BORDERS_MORNING, COPILOT_CASE1_SCHEDULE, DA_CLEARED, NET_POSITION_GW, REFERENCE_CASE1_SCHEDULE, simulateBattery } from "./market";
 import { offlineSeniorTurn } from "./offline";
 import { gradeWithRules } from "./scoring";
 import type { Submission } from "./types";
@@ -35,6 +35,19 @@ describe("battery simulator", () => {
     expect(DA_CLEARED[13]).toBeCloseTo(-250.3, 1);
     expect(DA_CLEARED[20]).toBeCloseTo(124.9, 1);
     expect(Math.max(...DA_CLEARED.slice(18, 22))).toBe(DA_CLEARED[20]);
+  });
+});
+
+describe("ENTSO-E and net-position data", () => {
+  it("has published CH capacity and an unpublished (flow-based) FR border", () => {
+    const ch = BORDERS_MORNING.find((b) => b.from === "CH" && b.to === "DE-LU");
+    const fr = BORDERS_MORNING.find((b) => b.from === "FR" && b.to === "DE-LU");
+    expect(ch?.published).toBe(true);
+    expect(ch?.minMW).toBeGreaterThanOrEqual(3000);
+    expect(fr?.published).toBe(false);
+  });
+  it("shows Germany exporting more than 10 GW at midday", () => {
+    expect(Math.min(...NET_POSITION_GW.slice(11, 15))).toBeLessThan(-10);
   });
 });
 
@@ -88,7 +101,7 @@ describe("Case 2 builds on Case 1", () => {
       base({
         caseId: CASE2.id,
         decision: "accept",
-        rationale: "Cloud front confirmed in the weather tab; French nuclear is baseload and the FR border is fully allocated.",
+        rationale: "Cloud band confirmed in the weather tab; Flamanville only returns Monday and Germany is exporting at midday, so the French news is noise. Hold.",
         priceLimit: "sell above 20",
         unwindCondition: "reverse if the 18:00 update clears",
         tabOpens: [{ tab: "weather", atSec: 20 }, { tab: "residual", atSec: 40 }, { tab: "news", atSec: 60 }, { tab: "borders", atSec: 70 }],

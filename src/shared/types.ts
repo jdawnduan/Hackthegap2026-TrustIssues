@@ -59,9 +59,12 @@ export interface NewsItem {
 }
 
 export interface BorderCapacity {
-  border: string;
-  direction: string;
-  availableMW: number;
+  from: string;
+  to: string;
+  /** false = "n/e" in the ENTSO-E export: flow-based coupling, no fixed capacity published */
+  published: boolean;
+  minMW: number | null;
+  maxMW: number | null;
   note: string;
 }
 

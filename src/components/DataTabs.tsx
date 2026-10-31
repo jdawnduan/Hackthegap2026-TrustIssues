@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Area, CartesianGrid, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { hh } from "../shared/market";
+import { hh, NET_POSITION_GW } from "../shared/market";
 import type { BatteryStatus, BorderCapacity, HourPoint, NewsItem, Schedule, TabId } from "../shared/types";
 import { TAB_LABELS } from "../shared/types";
 
@@ -147,14 +147,39 @@ function Asset({ b }: { b: BatteryStatus }) {
 }
 
 function Borders({ b }: { b: BorderCapacity[] }) {
+  const maxExport = Math.min(...NET_POSITION_GW);
+  const hExport = NET_POSITION_GW.indexOf(maxExport);
   return (
     <div>
-      <h4>Available cross-border capacity, tomorrow</h4>
+      <h4>Day-ahead forecast transfer capacities, DE-LU borders, tomorrow (ENTSO-E)</h4>
       <table className="data">
-        <thead><tr><th>Border</th><th>Direction</th><th>Available MW</th><th>Note</th></tr></thead>
-        <tbody>{b.map((r) => <tr key={r.border}><td>{r.border}</td><td style={{ textAlign: "left" }}>{r.direction}</td><td style={{ color: r.availableMW === 0 ? "var(--bad)" : undefined }}>{r.availableMW}</td><td style={{ textAlign: "left" }}>{r.note}</td></tr>)}</tbody>
+        <thead><tr><th>From</th><th>To</th><th>Capacity MW</th><th>Note</th></tr></thead>
+        <tbody>
+          {b.map((r) => (
+            <tr key={`${r.from}-${r.to}`}>
+              <td>{r.from}</td><td style={{ textAlign: "left" }}>{r.to}</td>
+              <td style={{ color: r.published ? undefined : "var(--muted)" }}>{r.published ? (r.minMW === r.maxMW ? `${r.minMW}` : `${r.minMW}–${r.maxMW}`) : "n/e"}</td>
+              <td style={{ textAlign: "left" }}>{r.note || "Published hourly"}</td>
+            </tr>
+          ))}
+        </tbody>
       </table>
-      <p className="muted">Power only moves between countries if there is capacity left on the line. No capacity means a price difference cannot be traded.</p>
+      <p className="muted" style={{ marginTop: 6 }}>"n/e" borders (FR, AT, BE, CZ, PL) sit inside the Core flow-based market coupling: there is no fixed capacity number to be "full" or "free"; the algorithm allocates flows on the whole grid at once.</p>
+      <h4 style={{ marginTop: 12 }}>Germany net position, same day (GW; negative = exporting)</h4>
+      <div className="scroll" style={{ maxHeight: 150 }}>
+        <table className="data">
+          <thead><tr><th>Hour</th><th>Net GW</th><th>Hour</th><th>Net GW</th></tr></thead>
+          <tbody>
+            {Array.from({ length: 12 }, (_, i) => (
+              <tr key={i}>
+                <td>{hh(i)}</td><td style={{ color: NET_POSITION_GW[i] < 0 ? "var(--accent)" : undefined }}>{NET_POSITION_GW[i]}</td>
+                <td>{hh(i + 12)}</td><td style={{ color: NET_POSITION_GW[i + 12] < 0 ? "var(--accent)" : undefined }}>{NET_POSITION_GW[i + 12]}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p className="muted">Germany is a net exporter from 09:00 to 17:00, peaking at {Math.abs(maxExport)} GW out at {hh(hExport)}: the midday problem is surplus, not scarcity.</p>
     </div>
   );
 }

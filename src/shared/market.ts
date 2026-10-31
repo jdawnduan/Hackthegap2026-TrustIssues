@@ -5,11 +5,18 @@
 // CC BY 4.0). Residual load went negative at midday and the day-ahead price
 // cleared at -250 EUR/MWh at 13:00.
 //
+// ALSO REAL (entsoe.json, from ENTSO-E Transparency Platform GUI exports):
+// day-ahead forecast transfer capacities on the DE-LU borders and the French
+// generation-unit unavailability notices around that day. Germany's net
+// position comes from Energy-Charts (cross-border trading series).
+//
 // INVENTED for the cases: the battery and its curtailment, the afternoon
-// cloud-band forecast update, intraday price indications, border capacities
-// and the news feed. Regenerate realday.json with scripts/fetch_real_data.py.
+// cloud-band forecast update, intraday price indications, and the news feed
+// (except the Flamanville 3 item, which paraphrases a real ENTSO-E notice).
+// Regenerate with scripts/fetch_real_data.py and scripts/parse_entsoe_exports.py.
 
 import real from "./realday.json";
+import entsoe from "./entsoe.json";
 import type {
   BatteryStatus,
   BorderCapacity,
@@ -83,12 +90,23 @@ export const BATTERY: BatteryStatus = {
   ],
 };
 
-export const BORDERS_MORNING: BorderCapacity[] = [
-  { border: "FR → DE", direction: "import to DE", availableMW: 0, note: "Fully allocated for tomorrow" },
-  { border: "DE → CH", direction: "export from DE", availableMW: 1200, note: "Normal" },
-  { border: "DE → AT", direction: "export from DE", availableMW: 900, note: "Normal" },
-  { border: "CH → IT", direction: "export from CH", availableMW: 350, note: "Reduced: line maintenance" },
-];
+/** Real day-ahead forecast transfer capacities for the DE-LU borders (ENTSO-E). */
+export const BORDERS_MORNING: BorderCapacity[] = entsoe.borders
+  .filter((b) => ["FR", "CH", "AT", "NL", "DK1", "CZ", "PL", "BE"].includes(b.from === "DE-LU" ? b.to : b.from))
+  .map((b) => ({ from: b.from, to: b.to, published: b.published, minMW: b.min_mw, maxMW: b.max_mw, note: b.note }))
+  .sort((a, b) => Number(b.published) - Number(a.published) || a.from.localeCompare(b.from) || a.to.localeCompare(b.to));
+
+/** Germany's hourly net position in GW (Energy-Charts); negative = net export. */
+export const NET_POSITION_GW: number[] = real.cross_border_trading_gw;
+
+/** The real Flamanville 3 notice used as the Case 2 red herring. */
+const FLAMANVILLE3 = entsoe.outages_fr.find((o) => o.unit === "FLAMANVILLE 3");
+export const FRENCH_NUCLEAR_NOTICE = {
+  unit: "Flamanville 3",
+  installedMW: FLAMANVILLE3?.installed_mw ?? 1620,
+  availableMW: FLAMANVILLE3?.available_mw ?? 430,
+  endsAt: FLAMANVILLE3?.end ?? "2025-05-12T00:00",
+};
 
 export const NEWS_MORNING: NewsItem[] = [
   {
@@ -109,9 +127,9 @@ export const NEWS_AFTERNOON: NewsItem[] = [
   ...NEWS_MORNING,
   {
     time: "14:20",
-    headline: "French nuclear unit returns early from maintenance",
-    body: "A 1.3 GW unit in France is back online two days ahead of schedule, adding baseload supply in France.",
-    relevant: false, // red herring: FR→DE border fully allocated, baseload not afternoon solar shape
+    headline: `Flamanville 3 EPR to end load-variation tests at midnight, back towards ${FRENCH_NUCLEAR_NOTICE.installedMW.toLocaleString("en-US")} MW`,
+    body: `EDF's ${FRENCH_NUCLEAR_NOTICE.installedMW.toLocaleString("en-US")} MW Flamanville 3 reactor, limited to ${FRENCH_NUCLEAR_NOTICE.availableMW} MW during a test programme since 28 April, is scheduled to end the programme at 00:00 Monday (ENTSO-E unavailability notice). Traders expect French baseload supply to rise next week.`,
+    relevant: false, // real notice, irrelevant here: takes effect after Sunday, France is behind flow-based coupling, Germany is exporting ~12 GW at midday
   },
   {
     time: "14:35",

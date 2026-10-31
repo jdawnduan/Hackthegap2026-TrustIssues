@@ -9,8 +9,8 @@ Sources (no API key needed):
     temperature for southern Germany (default: Munich).  https://open-meteo.com
 
 Outage notices and cross-border capacities live on the ENTSO-E Transparency
-Platform, which needs a free API token (register, then email
-transparency@entsoe.eu with subject "Restful API access"). Not fetched here.
+Platform. Its API needs a token, but the GUI CSV exports are free after
+sign-in; see scripts/parse_entsoe_exports.py for those.
 
 Usage:
   python3 scripts/fetch_real_data.py --date 2025-05-11
