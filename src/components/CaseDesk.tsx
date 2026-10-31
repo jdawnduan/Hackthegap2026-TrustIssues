@@ -152,34 +152,27 @@ export function CaseDesk({ def, onDone }: Props) {
         </div>
       </div>
 
-      {stage === "firsttake" && (
-        <div className="panel" style={{ maxWidth: 760 }}>
-          <h2>Before you see the copilot</h2>
-          <p>{def.brief}</p>
-          <p><strong>Task:</strong> {def.task}</p>
-          {c2?.needsCleanup && <div className="alert" style={{ marginBottom: 10 }}>{c2.cleanupNote}</div>}
-          <div className="firsttake">
-            <label className="muted" style={{ fontWeight: 600, fontSize: 12 }}>Your first take (one or two lines). What do you expect the right move to be, and what would you check first?</label>
-            <textarea value={firstTake} onChange={(e) => setFirstTake(e.target.value)} placeholder="e.g. Sunny day, so charge at midday and sell in the evening. I'd check the battery first." />
-            <small className="muted">Logged before the AI's view so we can measure whether the copilot pulls you off a good instinct.</small>
+      <div className="grid-desk">
+        {/* Left: brief, then either the junior's first take or the copilot's recommendation */}
+        <div className="stack">
+          <div className="panel">
+            <h4>Situation</h4>
+            <p>{def.brief}</p>
+            <p><strong>Task:</strong> {def.task}</p>
+            {c2?.needsCleanup && <div className="alert">{c2.cleanupNote}</div>}
           </div>
-          <div className="row" style={{ marginTop: 10 }}>
-            <button className="btn primary" onClick={() => setStage("work")}>Show the copilot's recommendation</button>
-            <button className="btn" onClick={() => setStage("work")}>Skip</button>
-          </div>
-        </div>
-      )}
-
-      {stage === "work" && (
-        <div className="grid-desk">
-          {/* Left: brief + copilot */}
-          <div className="stack">
-            <div className="panel">
-              <h4>Situation</h4>
-              <p>{def.brief}</p>
-              <p><strong>Task:</strong> {def.task}</p>
-              {c2?.needsCleanup && <div className="alert">{c2.cleanupNote}</div>}
+          {stage === "firsttake" ? (
+            <div className="firsttake">
+              <div className="row between"><strong>Your first take</strong><span className="pill accent">before the copilot</span></div>
+              <p className="muted" style={{ marginTop: 6 }}>Look at the data, then write one or two lines: what do you expect the right move to be, and what would you check first?</p>
+              <textarea value={firstTake} onChange={(e) => setFirstTake(e.target.value)} placeholder="e.g. Sunny day, so charge at midday and sell in the evening. I'd check the battery first." />
+              <small className="muted">Logged before the AI's view so we can measure whether the copilot pulls you off a good instinct.</small>
+              <div className="row" style={{ marginTop: 10 }}>
+                <button className="btn primary" onClick={() => setStage("work")} disabled={!firstTake.trim()}>Show the copilot's recommendation</button>
+                <button className="btn" onClick={() => setStage("work")}>Skip</button>
+              </div>
             </div>
+          ) : (
             <div className="card-copilot">
               <div className="row between"><strong>AI copilot</strong><span className="pill copilot">recommendation</span></div>
               <h3 style={{ marginTop: 6 }}>{copilot.headline}</h3>
@@ -187,19 +180,21 @@ export function CaseDesk({ def, onDone }: Props) {
               {copilot.expectedMarginEUR !== undefined && <p><strong>Expected margin:</strong> EUR {copilot.expectedMarginEUR.toLocaleString("en-US")}</p>}
               <div className="sources">{copilot.sources.map((s) => <span key={s}>{s}</span>)}</div>
             </div>
-          </div>
+          )}
+        </div>
 
           {/* Centre: data */}
           <div className="panel">
             <DataTabs tabs={tabs} data={tabData} opened={opened} urgent={c2?.needsCleanup ? ["auction"] : []} onOpen={logOpen} />
           </div>
 
-          {/* Right: senior + decision */}
+          {/* Right: senior + decision (locked until the junior has given a first take) */}
           <div className="stack">
-            <div className="panel">
+            {stage === "firsttake" && <div className="lock-note">Form your own view first. The senior and the decision panel unlock when you open the copilot's recommendation.</div>}
+            <div className={`panel ${stage === "firsttake" ? "locked" : ""}`} aria-disabled={stage === "firsttake"}>
               <SeniorChat chat={chat} busy={busy} source={source} onSend={onSend} />
             </div>
-            <div className="panel">
+            <div className={`panel ${stage === "firsttake" ? "locked" : ""}`} aria-disabled={stage === "firsttake"}>
               <h3>Your decision</h3>
               <div className="decisions">
                 {(["accept", "modify", "reject", "escalate"] as Decision[]).map((d) => (
@@ -233,7 +228,6 @@ export function CaseDesk({ def, onDone }: Props) {
             </div>
           </div>
         </div>
-      )}
     </div>
   );
 }
