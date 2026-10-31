@@ -26,11 +26,28 @@ from __future__ import annotations
 
 import argparse
 import json
+import ssl
 import sys
+import urllib.error
 import urllib.parse
 import urllib.request
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
+
+
+def ssl_context() -> ssl.SSLContext:
+    """python.org builds of Python on macOS ship without root certificates until
+    "Install Certificates.command" is run. Fall back to certifi's bundle when it
+    is installed (pip install certifi) so the script works either way."""
+    try:
+        import certifi  # type: ignore
+
+        return ssl.create_default_context(cafile=certifi.where())
+    except ImportError:
+        return ssl.create_default_context()
+
+
+CTX = ssl_context()
 
 EC = "https://api.energy-charts.info"
 OM = "https://archive-api.open-meteo.com/v1/archive"
@@ -38,8 +55,17 @@ OM = "https://archive-api.open-meteo.com/v1/archive"
 
 def get_json(url: str) -> dict:
     req = urllib.request.Request(url, headers={"User-Agent": "gate-closure-hackathon/0.1"})
-    with urllib.request.urlopen(req, timeout=60) as resp:  # noqa: S310 (public https endpoints)
-        return json.load(resp)
+    try:
+        with urllib.request.urlopen(req, timeout=60, context=CTX) as resp:  # noqa: S310 (public https endpoints)
+            return json.load(resp)
+    except urllib.error.URLError as e:
+        if "CERTIFICATE_VERIFY_FAILED" in str(e):
+            sys.exit(
+                "TLS certificate verification failed. On macOS with a python.org Python, run\n"
+                "  /Applications/Python\\ 3.x/Install\\ Certificates.command\n"
+                "or install certifi:  pip3 install certifi   and rerun."
+            )
+        raise
 
 
 def hourly(values: list[float | None], timestamps: list[int], day: date) -> list[float]:
