@@ -1,10 +1,15 @@
 // Market picture for "tomorrow" in the German zone (DE-LU).
 //
-// SYNTHETIC DATA. The shapes follow a typical sunny spring weekday in Germany
-// (deep midday solar trough with negative prices, morning and evening peaks).
-// Run scripts/fetch_real_data.py to pull a real day from Energy-Charts and
-// Open-Meteo and replace these arrays (see README "Using real data").
+// REAL DAY: Sunday 11 May 2025, loaded from realday.json (Energy-Charts /
+// SMARD for prices, load, solar, wind; Open-Meteo for Munich weather; both
+// CC BY 4.0). Residual load went negative at midday and the day-ahead price
+// cleared at -250 EUR/MWh at 13:00.
+//
+// INVENTED for the cases: the battery and its curtailment, the afternoon
+// cloud-band forecast update, intraday price indications, border capacities
+// and the news feed. Regenerate realday.json with scripts/fetch_real_data.py.
 
+import real from "./realday.json";
 import type {
   BatteryStatus,
   BorderCapacity,
@@ -13,23 +18,30 @@ import type {
   Schedule,
 } from "./types";
 
-const PRICE_DA = [78, 72, 68, 66, 68, 80, 105, 118, 112, 85, 40, 8, -12, -18, -10, 5, 38, 85, 128, 152, 145, 118, 98, 86];
-const LOAD = [48, 46, 45, 45, 46, 50, 57, 62, 64, 64, 63, 62, 61, 60, 59, 59, 60, 62, 64, 63, 60, 56, 52, 50];
-const SOLAR_MORNING = [0, 0, 0, 0, 0, 0.5, 4, 11, 21, 31, 39, 45, 49, 50, 47, 40, 30, 18, 7, 1, 0, 0, 0, 0];
-const WIND = [14, 14, 13, 13, 12, 12, 11, 10, 9, 8, 8, 7, 7, 7, 8, 8, 9, 10, 11, 12, 12, 13, 13, 14];
-const CLOUD_MORNING = [10, 10, 8, 8, 8, 6, 5, 5, 5, 5, 5, 5, 5, 6, 8, 10, 12, 15, 15, 15, 15, 15, 15, 15];
-const TEMP = [9, 8, 8, 7, 7, 7, 9, 12, 14, 16, 18, 19, 20, 21, 21, 21, 20, 19, 17, 15, 13, 12, 11, 10];
+export const MARKET_DAY = {
+  date: real.date,
+  weekday: real.weekday,
+  zone: real.zone,
+  sources: real.sources,
+};
 
-// Afternoon update (used in Case 2): a cloud front reaches southern Germany ~13:00.
+const PRICE_DA: number[] = real.price_da_eur_mwh;
+const LOAD: number[] = real.load_gw;
+const SOLAR_MORNING: number[] = real.solar_gw;
+const WIND: number[] = real.wind_gw;
+const CLOUD_MORNING: number[] = real.cloud_cover_pct;
+const TEMP: number[] = real.temp_c;
+
+// Afternoon update (Case 2, invented): a cloud band reaches southern Germany ~13:00.
 const SOLAR_DELTA_AFTERNOON = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -6, -6, -6, -5, -2, 0, 0, 0, 0, 0, 0];
-const CLOUD_AFTERNOON = [10, 10, 8, 8, 8, 6, 5, 5, 5, 5, 6, 10, 25, 70, 80, 80, 70, 45, 25, 15, 15, 15, 15, 15];
+const CLOUD_AFTERNOON = CLOUD_MORNING.map((c, h) => ({ 12: 25, 13: 70, 14: 80, 15: 80, 16: 70, 17: 45, 18: 25 } as Record<number, number>)[h] ?? c);
 const TEMP_DELTA_AFTERNOON = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -3, -4, -4, -3, -2, -1, 0, 0, 0, 0, 0];
-/** Intraday price indications after the afternoon update (EUR/MWh). */
-const INTRADAY_AFTERNOON = [79, 73, 68, 66, 69, 81, 106, 119, 113, 86, 39, 9, -10, 22, 30, 45, 70, 92, 131, 154, 146, 119, 98, 86];
+/** Intraday indications after the afternoon update: day-ahead plus the cloud uplift (invented). */
+const INTRADAY_DELTA = [1, 1, 0, 0, 1, 1, 1, 1, 1, 1, -1, 1, 2, 40, 40, 40, 32, 7, 2, 2, 1, 1, 0, 0];
 
 function build(solar: number[], cloud: number[], tempDelta: number[] = []): HourPoint[] {
   return PRICE_DA.map((price, hour) => {
-    const s = Math.max(0, solar[hour]);
+    const s = Math.max(0, +solar[hour].toFixed(1));
     return {
       hour,
       price,
@@ -43,23 +55,23 @@ function build(solar: number[], cloud: number[], tempDelta: number[] = []): Hour
   });
 }
 
-/** Morning view (Case 1): forecasts as of 09:30 today. */
+/** Morning view (Case 1): forecasts as of 09:30 the day before. Real data. */
 export const MORNING_FORECAST: HourPoint[] = build(SOLAR_MORNING, CLOUD_MORNING);
 
-/** Afternoon view (Case 2): updated weather and solar forecasts as of 15:00 today. */
+/** Afternoon view (Case 2): updated weather and solar forecasts as of 15:00. Invented cloud band on top of the real day. */
 export const AFTERNOON_FORECAST: HourPoint[] = build(
   SOLAR_MORNING.map((v, i) => v + SOLAR_DELTA_AFTERNOON[i]),
   CLOUD_AFTERNOON,
   TEMP_DELTA_AFTERNOON,
 );
 
-export const INTRADAY_INDICATIONS: number[] = INTRADAY_AFTERNOON;
+export const INTRADAY_INDICATIONS: number[] = PRICE_DA.map((p, h) => +(p + INTRADAY_DELTA[h]).toFixed(1));
 
-/** Day-ahead prices as the auction cleared them (synthetic: equal to the morning forecast). */
+/** Day-ahead prices as the auction cleared them: the real 11 May 2025 prices. */
 export const DA_CLEARED: number[] = PRICE_DA;
 
 export const BATTERY: BatteryStatus = {
-  name: "Battery Süd 1 (synthetic asset, DE)",
+  name: "Battery Süd 1 (invented asset, DE)",
   powerMW: 50,
   capacityMWh: 100,
   stateOfChargeMWh: 80,
@@ -81,8 +93,8 @@ export const BORDERS_MORNING: BorderCapacity[] = [
 export const NEWS_MORNING: NewsItem[] = [
   {
     time: "07:45",
-    headline: "Record solar expected across Germany tomorrow",
-    body: "Forecasters see a clear sky over most of Germany; solar output could peak around 50 GW.",
+    headline: "Clear skies across Germany on Sunday, solar near record",
+    body: "Forecasters see cloudless weather over most of Germany tomorrow; with Sunday demand low, solar could cover more than the entire load at midday.",
     relevant: true,
   },
   {
@@ -204,14 +216,24 @@ export const COPILOT_CASE1_SCHEDULE: Schedule = (() => {
   return s;
 })();
 
-/** Reference answer for Case 1: empty the battery in the morning peak, then a full cycle. */
+/**
+ * Reference answer for Case 1. It is a Sunday, so there is no morning peak:
+ * the only place to empty the battery before the trough is the pre-dawn
+ * hours (05:00 ~95 EUR, 06:00 ~88 EUR). Then a full cycle.
+ */
 export const REFERENCE_CASE1_SCHEDULE: Schedule = (() => {
   const s = emptySchedule();
-  s[7] = 50;
-  s[8] = 30;
+  s[5] = 50;
+  s[6] = 30;
   s[12] = -50;
   s[13] = -50;
   s[19] = 50;
   s[20] = 50;
   return s;
 })();
+
+/** Cost of moving the 13:00 charging block to 11:00 after the cloud update (Case 2 "reject" path). */
+export function reshiftCostEUR(position: Schedule): number {
+  if (position[13] >= 0) return 0;
+  return Math.round(-position[13] * (INTRADAY_INDICATIONS[11] - INTRADAY_INDICATIONS[13]));
+}

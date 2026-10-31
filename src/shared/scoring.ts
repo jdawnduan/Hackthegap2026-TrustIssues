@@ -5,7 +5,6 @@ import { buildCase2Context, CASE1, CASE2 } from "./cases";
 import {
   COPILOT_CASE1_SCHEDULE,
   DA_CLEARED,
-  INTRADAY_INDICATIONS,
   REFERENCE_CASE1_SCHEDULE,
   simulateBattery,
 } from "./market";
@@ -126,27 +125,28 @@ export function gradeWithRules(
     scores.news = clamp((newsOpened ? 35 : 0) + (bordersOpened ? 15 : 0) + Math.min(newsHits, 2) * 25);
 
     if (best) scores.ai_judgement = keyOpened >= 2 ? 100 : 55; // accepted, but did they verify?
+    else if (acceptable) scores.ai_judgement = 75; // modified a correct recommendation
     else if (sub.decision === "escalate") scores.ai_judgement = 40;
     else scores.ai_judgement = 10; // rejected a correct recommendation
     if (best && keyOpened < 2) feedback.push("You accepted a correct recommendation without checking it. Right answer, weak process.");
-    if (sub.decision === "reject") feedback.push("The copilot was right this time. Distrusting everything is also a failure mode.");
+    if (sub.decision === "reject") feedback.push("The copilot was right this time: holding was the money-making call. Distrusting everything after being burned is also a failure mode.");
 
     const hasLimit = !!sub.priceLimit?.trim();
     const hasUnwind = !!sub.unwindCondition?.trim();
     scores.risk = clamp((hasLimit ? 45 : 0) + (hasUnwind ? 35 : 0) + (acceptable ? 20 : 0));
 
-    // P&L of the intraday shift: sell charging volume in 13–15 back intraday, re-buy at 11:00.
-    let gain = 0;
-    if (acceptable) {
-      [13, 14, 15].forEach((h) => {
-        if (position[h] < 0) gain += -position[h] * (INTRADAY_INDICATIONS[h] - INTRADAY_INDICATIONS[11]);
-      });
-    }
+    // P&L: holding (accept/modify) costs nothing. Rejecting means re-shifting the 13:00
+    // charging block to 11:00, which loses the deep-trough price. Escalating costs nothing but ownership.
+    const gain = sub.decision === "reject" ? -c2.reshiftCostEUR : 0;
     const cleanupCost = c2.needsCleanup ? c2.positionSim.correctionCostEUR * (cleanupAddressed ? 1 : 1.5) : 0;
     pnl = Math.round(gain - cleanupCost);
+    const shiftNote =
+      sub.decision === "reject"
+        ? `Re-shifting the 13:00 block to 11:00 costs EUR ${c2.reshiftCostEUR.toLocaleString("en-US")} (you give up the -250 price for -52).`
+        : "Holding the position costs nothing; the evening sells at 117 and 125 EUR stand.";
     pnlNote = c2.needsCleanup
-      ? `Intraday shift ${gain >= 0 ? "+" : ""}EUR ${Math.round(gain).toLocaleString("en-US")}; cleaning up the Case 1 position costs EUR ${Math.round(cleanupCost).toLocaleString("en-US")}${cleanupAddressed ? "" : " (more, because it was left to the imbalance market)"}.`
-      : `Intraday shift ${gain >= 0 ? "+" : ""}EUR ${Math.round(gain).toLocaleString("en-US")}.`;
+      ? `${shiftNote} Cleaning up the Case 1 position costs EUR ${Math.round(cleanupCost).toLocaleString("en-US")}${cleanupAddressed ? "" : " (more, because it was left to the imbalance market)"}.`
+      : shiftNote;
   }
 
   if (sub.late) {

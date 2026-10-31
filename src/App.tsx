@@ -74,7 +74,7 @@ export function App() {
                   </div>
                 );
               })}
-              <p className="footer-note">Synthetic data modelled on a sunny German spring day. The junior, the asset and the desk are invented. No real Alpiq data or people.</p>
+              <p className="footer-note">Real market day: Sunday 11 May 2025, DE-LU (Energy-Charts / SMARD and Open-Meteo, CC BY 4.0). The junior, the battery and its curtailment, the afternoon cloud update, intraday indications, borders and news are invented. No Alpiq data or people.</p>
             </div>
           </div>
         </div>

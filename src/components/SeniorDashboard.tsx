@@ -40,7 +40,7 @@ export function SeniorDashboard() {
                 <tr key={r.caseId}>
                   <td className="mono">{new Date(r.submittedAt).toLocaleTimeString()}</td>
                   <td style={{ textAlign: "left" }}>{r.caseTitle}</td>
-                  <td style={{ textAlign: "left" }}>{r.caseId.startsWith("c1") ? "Buy 100 MWh midday, sell evening" : "Shift volume out of 13–16"}</td>
+                  <td style={{ textAlign: "left" }}>{r.caseId.startsWith("c1") ? "Buy 100 MWh midday, sell evening" : "Hold; alert on 18:00 update"}</td>
                   <td style={{ textAlign: "left" }}><strong>{r.submission.decision}</strong>{r.submission.decision === "escalate" && " → senior"}</td>
                   <td>{r.submission.confidence}%</td>
                   <td>{r.submission.secondsTaken}</td>

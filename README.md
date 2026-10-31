@@ -14,11 +14,11 @@ A junior trader works through short trading cases under a gate-closure countdown
 | | Case 1 · Day-ahead battery bid (09:30) | Case 2 · Intraday preparation (15:00) |
 |---|---|---|
 | Junior's task | Review the copilot's bid for a 50 MW / 100 MWh battery, approve or correct it | Prepare tomorrow's intraday plan after the auction results and the afternoon forecast update |
-| The copilot is… | **Wrong by omission.** Its market story is true, but the battery is already 80 % full after a curtailed discharge; 80 of the 100 MWh it wants to buy cannot be stored | **Right.** A cloud front cuts German solar by ~6 GW in the afternoon. A French nuclear headline is a red herring |
-| What we test | Checking your own book before trusting a market story; improving on the AI's plan | Verifying a correct AI instead of rubber-stamping it, or rejecting it out of distrust |
+| The copilot is… | **Wrong by omission.** Its market story is true, but the battery is already 80 % full after a curtailed discharge; 80 of the 100 MWh it wants to buy cannot be stored | **Right, and says hold.** A cloud band lifts afternoon prices by ~40 EUR, but the midday trough is ~200 EUR deep, so moving the charging would cost ~EUR 8k. A French nuclear headline is a red herring |
+| What we test | Checking your own book before trusting a market story; improving on the AI's plan (on a Sunday, that means selling pre-dawn, since there is no morning peak) | Verifying a correct AI instead of rubber-stamping it, and resisting the urge to act after being burned |
 | Builds on | – | The position Case 1 created. Fell for the trap? Case 2 opens with an urgent clean-up and a loss |
 
-Everything is **synthetic**: the junior ("Mia"), the asset, the desk, and the market day (modelled on a sunny German spring weekday). No real Alpiq data or people. See [Using real data](#using-real-data) to swap in a real day from public sources.
+The market day is **real**: Sunday 11 May 2025 in the German zone, when residual load went negative at midday and the day-ahead price cleared at **−250 EUR/MWh** at 13:00 (Energy-Charts / SMARD and Open-Meteo, CC BY 4.0). The junior ("Mia"), the battery and its curtailment, the afternoon cloud update, intraday indications, border capacities and the news feed are **invented**. No Alpiq data or people. See [Using real data](#using-real-data) to load a different day.
 
 ## Run it
 
@@ -40,7 +40,8 @@ npm start         # serve the built app + API on :8787
 
 ```
 src/shared/      domain logic shared by browser and server
-  market.ts        synthetic market day + battery simulator (feasibility, P&L, correction cost)
+  market.ts        market day (from realday.json) + battery simulator (feasibility, P&L, correction cost)
+  realday.json     real hourly series for 11 May 2025, written by scripts/fetch_real_data.py
   cases.ts         the two cases: briefs, copilot scripts, traps, hidden senior notes, rubric
   scoring.ts       rule-based scoring of six sub-skills, calibration buckets
   offline.ts       scripted senior + template case drafter (no API key needed)
@@ -64,13 +65,15 @@ AI_USAGE.md      where we used AI to build this (required deliverable)
 
 ## Using real data
 
-The simulator ships with synthetic series so the demo is deterministic and works offline. To anchor it on a real day:
+`src/shared/realday.json` holds the hourly series the app runs on (24 CET/CEST delivery hours). To load a different day:
 
 ```bash
-python3 scripts/fetch_real_data.py --date 2025-05-11 --out data/real
+python3 scripts/fetch_real_data.py --date 2025-05-11
 ```
 
-This pulls day-ahead prices, load, solar and wind for DE-LU from the [Energy-Charts API](https://api.energy-charts.info) (Fraunhofer ISE, CC BY 4.0) and hourly cloud cover and temperature for southern Germany from [Open-Meteo](https://open-meteo.com) (CC BY 4.0), and prints TypeScript arrays you can paste into `src/shared/market.ts`. ENTSO-E Transparency Platform data (outages, cross-border capacity) needs an API token; see the script header. `data/real/` is git-ignored.
+This pulls day-ahead prices, load, solar and wind for DE-LU from the [Energy-Charts API](https://api.energy-charts.info) (Fraunhofer ISE, data from Bundesnetzagentur / SMARD, CC BY 4.0) and hourly cloud cover and temperature for Munich from [Open-Meteo](https://open-meteo.com) (CC BY 4.0), writes `src/shared/realday.json`, and keeps the raw responses in `data/real/` (git-ignored). After loading a new day, re-read the Case 1 hidden notes in `src/shared/cases.ts`: the trap only works if midday is cheap and the evening is expensive, and the reference schedule assumes a Sunday with no morning peak. ENTSO-E Transparency Platform data (outages, cross-border capacity) needs an API token; see the script header.
+
+If you see `CERTIFICATE_VERIFY_FAILED` on macOS with a python.org Python, run `/Applications/Python 3.x/Install Certificates.command` or `pip3 install certifi`.
 
 ## License
 

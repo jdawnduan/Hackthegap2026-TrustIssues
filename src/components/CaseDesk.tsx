@@ -214,8 +214,8 @@ export function CaseDesk({ def, onDone }: Props) {
               )}
               {isCase2 && (decision === "accept" || decision === "modify") && (
                 <>
-                  <div className="field"><label>Price limit for the intraday trade</label><input type="text" value={priceLimit} onChange={(e) => setPriceLimit(e.target.value)} placeholder="e.g. sell 13:00–15:00 only above 20 EUR/MWh" /></div>
-                  <div className="field"><label>Unwind condition</label><input type="text" value={unwind} onChange={(e) => setUnwind(e.target.value)} placeholder="e.g. undo if the 18:00 solar update reverses" /></div>
+                  <div className="field"><label>Price limit for the intraday trade</label><input type="text" value={priceLimit} onChange={(e) => setPriceLimit(e.target.value)} placeholder="e.g. sell the 13:00 block back only above -60 EUR/MWh" /></div>
+                  <div className="field"><label>Unwind condition</label><input type="text" value={unwind} onChange={(e) => setUnwind(e.target.value)} placeholder="e.g. unwind if the 18:00 solar update removes the cloud band" /></div>
                 </>
               )}
               <div className="field">

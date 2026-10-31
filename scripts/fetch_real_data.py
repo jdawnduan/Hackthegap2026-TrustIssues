@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Fetch one real day of public market and weather data to anchor the simulator.
+"""Fetch one real day of public market and weather data for the simulator.
 
 Sources (no API key needed):
-  * Energy-Charts API (Fraunhofer ISE), CC BY 4.0: day-ahead prices and public
-    net generation for the DE-LU bidding zone.  https://api.energy-charts.info
+  * Energy-Charts API (Fraunhofer ISE), CC BY 4.0, data from Bundesnetzagentur /
+    SMARD.de: day-ahead prices and public net generation for DE-LU.
+    https://api.energy-charts.info
   * Open-Meteo historical weather API, CC BY 4.0: hourly cloud cover and
     temperature for southern Germany (default: Munich).  https://open-meteo.com
 
@@ -12,14 +13,15 @@ Platform, which needs a free API token (register, then email
 transparency@entsoe.eu with subject "Restful API access"). Not fetched here.
 
 Usage:
-  python3 scripts/fetch_real_data.py --date 2025-05-11 --out data/real
+  python3 scripts/fetch_real_data.py --date 2025-05-11
 
-Writes raw JSON to --out and prints TypeScript arrays (24 hourly values each)
-to paste into src/shared/market.ts. Written without network access at the
-hackathon venue, so treat the response parsing as "best effort": if a field
-name has changed upstream the script prints the raw keys it received.
+Writes src/shared/realday.json (what the app reads) and keeps the raw
+responses under --raw (default data/real, git-ignored). Energy-Charts returns
+the day aligned to Central European time, so the first 24 hourly values are
+the 24 delivery hours of that day; Open-Meteo is asked for Europe/Berlin time
+so the hours line up.
 
-Only the standard library is used.
+Only the standard library is used (certifi is picked up if installed).
 """
 
 from __future__ import annotations
@@ -31,8 +33,11 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
-from datetime import date, datetime, timedelta, timezone
+from datetime import date, timedelta
 from pathlib import Path
+
+EC = "https://api.energy-charts.info"
+OM = "https://archive-api.open-meteo.com/v1/archive"
 
 
 def ssl_context() -> ssl.SSLContext:
@@ -48,9 +53,6 @@ def ssl_context() -> ssl.SSLContext:
 
 
 CTX = ssl_context()
-
-EC = "https://api.energy-charts.info"
-OM = "https://archive-api.open-meteo.com/v1/archive"
 
 
 def get_json(url: str) -> dict:
@@ -68,54 +70,48 @@ def get_json(url: str) -> dict:
         raise
 
 
-def hourly(values: list[float | None], timestamps: list[int], day: date) -> list[float]:
-    """Average sub-hourly values into 24 hourly buckets for the given UTC day."""
-    buckets: list[list[float]] = [[] for _ in range(24)]
-    for ts, v in zip(timestamps, values):
-        if v is None:
-            continue
-        t = datetime.fromtimestamp(ts, tz=timezone.utc)
-        if t.date() == day:
-            buckets[t.hour].append(float(v))
-    return [round(sum(b) / len(b), 1) if b else 0.0 for b in buckets]
-
-
-def ts_array(name: str, values: list[float]) -> str:
-    return f"const {name} = [{', '.join(str(v) for v in values)}];"
+def hourly_from_quarters(values: list[float | None]) -> list[float]:
+    """Average 15-minute values into the first 24 hourly buckets."""
+    out = []
+    for h in range(24):
+        q = [float(v) for v in values[h * 4 : h * 4 + 4] if v is not None]
+        out.append(round(sum(q) / len(q), 1) if q else 0.0)
+    return out
 
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--date", required=True, help="UTC day, YYYY-MM-DD (a sunny German weekday works best)")
-    ap.add_argument("--out", default="data/real")
+    ap.add_argument("--date", required=True, help="Delivery day, YYYY-MM-DD (a sunny German Sunday gives the deepest trough)")
+    ap.add_argument("--raw", default="data/real", help="where to keep the raw API responses")
+    ap.add_argument("--out", default="src/shared/realday.json", help="JSON the app reads")
     ap.add_argument("--bzn", default="DE-LU", help="Energy-Charts bidding zone")
     ap.add_argument("--lat", type=float, default=48.14)
     ap.add_argument("--lon", type=float, default=11.58)
+    ap.add_argument("--place", default="Munich")
     args = ap.parse_args()
 
     day = date.fromisoformat(args.date)
     nxt = day + timedelta(days=1)
-    out = Path(args.out)
-    out.mkdir(parents=True, exist_ok=True)
+    raw = Path(args.raw)
+    raw.mkdir(parents=True, exist_ok=True)
 
-    # --- Energy-Charts: day-ahead price --------------------------------------
+    # --- Energy-Charts: day-ahead price (hourly, CET-aligned) ------------------
     q = urllib.parse.urlencode({"bzn": args.bzn, "start": day.isoformat(), "end": nxt.isoformat()})
     price_raw = get_json(f"{EC}/price?{q}")
-    (out / "energy_charts_price.json").write_text(json.dumps(price_raw))
-    prices = hourly(price_raw.get("price", []), price_raw.get("unix_seconds", []), day)
+    (raw / "energy_charts_price.json").write_text(json.dumps(price_raw))
+    prices = [round(float(v), 1) for v in price_raw["price"][:24]]
 
-    # --- Energy-Charts: public power (load, solar, wind) ----------------------
+    # --- Energy-Charts: public power (15-min: load, solar, wind) ---------------
     country = "de" if args.bzn.startswith("DE") else args.bzn.split("-")[0].lower()
     q = urllib.parse.urlencode({"country": country, "start": day.isoformat(), "end": nxt.isoformat()})
     power_raw = get_json(f"{EC}/public_power?{q}")
-    (out / "energy_charts_public_power.json").write_text(json.dumps(power_raw))
+    (raw / "energy_charts_public_power.json").write_text(json.dumps(power_raw))
     series = {p.get("name", ""): p.get("data", []) for p in power_raw.get("production_types", [])}
-    stamps = power_raw.get("unix_seconds", [])
 
     def pick(*names: str) -> list[float]:
         for n in names:
             if n in series:
-                return [v / 1000 for v in hourly(series[n], stamps, day)]  # MW -> GW
+                return [round(v / 1000, 1) for v in hourly_from_quarters(series[n])]  # MW -> GW
         print(f"[warn] none of {names} in Energy-Charts production_types; got {sorted(series)}", file=sys.stderr)
         return [0.0] * 24
 
@@ -123,7 +119,7 @@ def main() -> int:
     solar = pick("Solar")
     wind = [round(a + b, 1) for a, b in zip(pick("Wind onshore"), pick("Wind offshore"))]
 
-    # --- Open-Meteo: cloud cover and temperature ------------------------------
+    # --- Open-Meteo: cloud cover and temperature, local time -------------------
     q = urllib.parse.urlencode(
         {
             "latitude": args.lat,
@@ -131,23 +127,38 @@ def main() -> int:
             "start_date": day.isoformat(),
             "end_date": day.isoformat(),
             "hourly": "cloud_cover,temperature_2m",
-            "timezone": "UTC",
+            "timezone": "Europe/Berlin",
         }
     )
     wx = get_json(f"{OM}?{q}")
-    (out / "open_meteo.json").write_text(json.dumps(wx))
-    cloud = [round(float(v or 0)) for v in wx.get("hourly", {}).get("cloud_cover", [])][:24]
-    temp = [round(float(v or 0)) for v in wx.get("hourly", {}).get("temperature_2m", [])][:24]
+    (raw / "open_meteo.json").write_text(json.dumps(wx))
+    cloud = [round(float(v or 0)) for v in wx["hourly"]["cloud_cover"]][:24]
+    temp = [round(float(v or 0)) for v in wx["hourly"]["temperature_2m"]][:24]
 
-    print(f"// Real data for {day} ({args.bzn}). Sources: Energy-Charts (CC BY 4.0), Open-Meteo (CC BY 4.0).")
-    print(ts_array("PRICE_DA", prices))
-    print(ts_array("LOAD", load))
-    print(ts_array("SOLAR_MORNING", solar))
-    print(ts_array("WIND", wind))
-    print(ts_array("CLOUD_MORNING", cloud))
-    print(ts_array("TEMP", temp))
-    print("// Paste into src/shared/market.ts, then re-check the Case 1 trap: the midday hours must still be cheap enough")
-    print("// and the evening peak expensive enough for the battery story to hold. Adjust BATTERY.stateOfChargeMWh if needed.")
+    out = {
+        "date": day.isoformat(),
+        "weekday": day.strftime("%A"),
+        "zone": args.bzn,
+        "weather_location": f"{args.place} ({args.lat}N, {args.lon}E)",
+        "hours": "CET/CEST delivery hours 00:00-23:00",
+        "sources": {
+            "prices_load_generation": "Energy-Charts API (Fraunhofer ISE), data from Bundesnetzagentur | SMARD.de, CC BY 4.0",
+            "weather": "Open-Meteo historical weather API, CC BY 4.0",
+        },
+        "price_da_eur_mwh": prices,
+        "load_gw": load,
+        "solar_gw": solar,
+        "wind_gw": wind,
+        "cloud_cover_pct": cloud,
+        "temp_c": temp,
+    }
+    Path(args.out).write_text(json.dumps(out, indent=1) + "\n")
+
+    print(f"Wrote {args.out} for {day} ({day.strftime('%A')}, {args.bzn}).")
+    print(f"  price min {min(prices)} @ {prices.index(min(prices)):02d}:00, max {max(prices)} @ {prices.index(max(prices)):02d}:00 EUR/MWh")
+    print(f"  solar peak {max(solar)} GW, load range {min(load)}-{max(load)} GW")
+    print("Now re-check src/shared/cases.ts: the Case 1 trap needs a cheap midday and an expensive evening,")
+    print("and the reference schedule assumes no morning peak (Sunday). Run `npm test`.")
     return 0
 
 

@@ -1,7 +1,7 @@
 # data/
 
-- The app ships with **synthetic** series in `src/shared/market.ts` (a sunny German spring weekday), so the demo is deterministic and works offline.
-- `real/` (git-ignored) is where `scripts/fetch_real_data.py` saves raw JSON from Energy-Charts and Open-Meteo.
+- The app runs on **real** hourly series for Sunday 11 May 2025 (DE-LU), stored in `src/shared/realday.json` and written by `scripts/fetch_real_data.py`. That day residual load went negative at midday and the day-ahead price hit −250 EUR/MWh.
+- `real/` (git-ignored) is where the script keeps the raw JSON responses.
 
 | Source | Licence | Used for |
 |---|---|---|
@@ -9,4 +9,4 @@
 | [Open-Meteo](https://open-meteo.com) historical API | CC BY 4.0 | Hourly cloud cover and temperature, southern Germany |
 | [ENTSO-E Transparency Platform](https://transparency.entsoe.eu) | ENTSO-E terms; API token required | Outages, cross-border capacity (not fetched yet) |
 
-Battery state of charge, the curtailment note, Alpiq's position, intraday indications, border capacities and the news feed are invented for the cases.
+Invented for the cases: the battery, its state of charge and curtailment note, the afternoon cloud-band forecast update (the real day stayed cloudless), intraday price indications, border capacities and the news feed.

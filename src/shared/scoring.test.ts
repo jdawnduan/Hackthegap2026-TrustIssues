@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildCase2Context, CASE1, CASE2, clearedPositionFromCase1 } from "./cases";
+import { buildCase2Context, CASE1, CASE2, clearedPositionFromCase1, COPILOT_CASE1 } from "./cases";
 import { COPILOT_CASE1_SCHEDULE, DA_CLEARED, REFERENCE_CASE1_SCHEDULE, simulateBattery } from "./market";
 import { offlineSeniorTurn } from "./offline";
 import { gradeWithRules } from "./scoring";
@@ -29,7 +29,12 @@ describe("battery simulator", () => {
   it("accepts the reference plan and earns more than the copilot's headline", () => {
     const sim = simulateBattery(REFERENCE_CASE1_SCHEDULE, DA_CLEARED);
     expect(sim.feasible).toBe(true);
-    expect(sim.netEUR).toBeGreaterThan(16350);
+    expect(sim.netEUR).toBeGreaterThan(COPILOT_CASE1.expectedMarginEUR!);
+  });
+  it("uses the real 11 May 2025 prices: -250 at 13:00, evening peak at 20:00", () => {
+    expect(DA_CLEARED[13]).toBeCloseTo(-250.3, 1);
+    expect(DA_CLEARED[20]).toBeCloseTo(124.9, 1);
+    expect(Math.max(...DA_CLEARED.slice(18, 22))).toBe(DA_CLEARED[20]);
   });
 });
 
@@ -77,6 +82,7 @@ describe("Case 2 builds on Case 1", () => {
     const reject = gradeWithRules(CASE2, base({ caseId: CASE2.id, decision: "reject", rationale: "don't trust it" }), 8, { position: pos });
     expect(reject.correct).toBe(false);
     expect(reject.scores.ai_judgement).toBe(10);
+    expect(reject.pnlEUR).toBeLessThan(-7000); // re-shifting 13:00 -> 11:00 gives up the -250 price
     const accept = gradeWithRules(
       CASE2,
       base({
@@ -94,6 +100,7 @@ describe("Case 2 builds on Case 1", () => {
     expect(accept.scores.ai_judgement).toBe(100);
     expect(accept.scores.risk).toBe(100);
     expect(accept.rubberStampFlag).toBe(false);
+    expect(accept.pnlEUR).toBe(0); // holding costs nothing
   });
 });
 
