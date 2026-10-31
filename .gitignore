@@ -4,3 +4,5 @@ dist/
 .env.local
 *.log
 data/real/
+__pycache__/
+*.pyc
