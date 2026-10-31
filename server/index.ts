@@ -5,28 +5,27 @@ import express from "express";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-// Load .env from the repo root (ANTHROPIC_API_KEY, PORT). Node 22+ built-in;
-// silently skipped when the file does not exist, which is the offline-mode case.
-try {
-  process.loadEnvFile(path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", ".env"));
-} catch {
-  /* no .env: offline mode */
+// Load .env from the repo root (ANTHROPIC_API_KEY, PORT). Own tiny parser so it
+// works on any Node version; existing environment variables win over the file.
+import fs from "node:fs";
+const envPath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", ".env");
+if (fs.existsSync(envPath)) {
+  let loaded = 0;
+  for (const raw of fs.readFileSync(envPath, "utf8").split(/\r?\n/)) {
+    const line = raw.trim();
+    if (!line || line.startsWith("#")) continue;
+    const m = /^(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)$/.exec(line);
+    if (!m) continue;
+    let value = m[2].trim();
+    if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) value = value.slice(1, -1);
+    if (!(m[1] in process.env)) process.env[m[1]] = value;
+    loaded++;
+  }
+  const key = process.env.ANTHROPIC_API_KEY ?? "";
+  console.log(`.env: ${loaded} variable(s) read from ${envPath}; ANTHROPIC_API_KEY ${key ? `set (${key.length} chars, starts "${key.slice(0, 7)}")` : "EMPTY or missing"}`);
+} else {
+  console.log(`.env: not found at ${envPath} (offline mode). Copy .env.example to .env and add ANTHROPIC_API_KEY.`);
 }
-import { caseById } from "../src/shared/cases";
-import { gradeWithRules } from "../src/shared/scoring";
-import { offlineDraftCase, offlineSeniorTurn } from "../src/shared/offline";
-import type { CaseResult, ChatMessage, DraftCase, Schedule, Submission, TabOpen } from "../src/shared/types";
-import { askClaudeJSON, claudeEnabled, ClaudeUnavailable, MODEL } from "./claude";
-import {
-  caseContext,
-  DRAFT_SCHEMA,
-  DRAFT_SYSTEM,
-  GRADER_SCHEMA,
-  GRADER_SYSTEM,
-  SENIOR_SCHEMA,
-  SENIOR_SYSTEM,
-  tabLogText,
-} from "./prompts";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
