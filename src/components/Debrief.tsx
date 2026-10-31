@@ -40,8 +40,8 @@ export function Debrief({ result, onNext, nextLabel }: Props) {
         <div className="panel">
           <h4>Feedback</h4>
           <p>{result.feedback || "Solid work."}</p>
-          <div className="panel" style={{ background: "var(--accent-soft)", borderColor: "transparent", marginTop: 12 }}>
-            <h4 style={{ color: "var(--accent)" }}>One lesson</h4>
+          <div className="lesson">
+            <h4>One lesson</h4>
             <strong>{result.lesson}</strong>
           </div>
           {result.trapCaught === false && (

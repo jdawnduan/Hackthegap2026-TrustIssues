@@ -34,11 +34,11 @@ export function Profile() {
           <h4>Week {first.week} vs week {last.week}</h4>
           <ResponsiveContainer width="100%" height={300}>
             <RadarChart data={radar} outerRadius={110}>
-              <PolarGrid stroke="var(--border)" />
-              <PolarAngleAxis dataKey="skill" tick={{ fill: "var(--muted)", fontSize: 12 }} />
+              <PolarGrid stroke="var(--grey)" />
+              <PolarAngleAxis dataKey="skill" tick={{ fill: "var(--text-2)", fontSize: 12 }} />
               <PolarRadiusAxis domain={[0, 100]} tick={false} axisLine={false} />
-              <Radar name={`Week ${first.week}`} dataKey={`Week ${first.week}`} stroke="var(--muted)" fill="var(--muted)" fillOpacity={0.15} isAnimationActive={false} />
-              <Radar name={`Week ${last.week}`} dataKey={`Week ${last.week}`} stroke="var(--accent)" fill="var(--accent)" fillOpacity={0.3} isAnimationActive={false} />
+              <Radar name={`Week ${first.week}`} dataKey={`Week ${first.week}`} stroke="var(--grey-2)" fill="var(--grey-2)" fillOpacity={0.35} isAnimationActive={false} />
+              <Radar name={`Week ${last.week}`} dataKey={`Week ${last.week}`} stroke="var(--navy)" fill="var(--navy)" fillOpacity={0.25} isAnimationActive={false} />
               <Legend />
             </RadarChart>
           </ResponsiveContainer>
@@ -69,13 +69,13 @@ export function Profile() {
         <h4>Trend by sub-skill</h4>
         <ResponsiveContainer width="100%" height={260}>
           <LineChart data={trend} margin={{ top: 8, right: 12, left: -10, bottom: 0 }}>
-            <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" />
-            <XAxis dataKey="week" stroke="var(--muted)" />
-            <YAxis domain={[0, 100]} stroke="var(--muted)" />
+            <CartesianGrid stroke="var(--grey)" />
+            <XAxis dataKey="week" stroke="var(--text-2)" tick={{ fill: "var(--text-2)", fontFamily: "var(--mono)", fontSize: 12 }} label={{ value: "Week", position: "insideBottomRight", offset: -4, fill: "var(--text-2)", fontSize: 12 }} />
+            <YAxis domain={[0, 100]} stroke="var(--text-2)" tick={{ fill: "var(--text-2)", fontFamily: "var(--mono)", fontSize: 12 }} label={{ value: "Score (0–100)", angle: -90, position: "insideLeft", fill: "var(--text-2)", fontSize: 12 }} />
             <Tooltip />
             <Legend />
             {SUBSKILLS.map((s, i) => (
-              <Line key={s.id} dataKey={s.short} stroke={["#f26b1d", "#2c5aa0", "#1f8a4c", "#b8860b", "#5b4b8a", "#c6322b"][i]} dot={false} strokeWidth={s.id === "ai_judgement" ? 3 : 1.5} isAnimationActive={false} />
+              <Line key={s.id} dataKey={s.short} stroke={["var(--navy)", "var(--green)", "var(--gold)", "var(--text-2)", "var(--grey-2)", "var(--coral)"][i]} dot={false} strokeWidth={s.id === "ai_judgement" ? 3 : 1.5} isAnimationActive={false} />
             ))}
           </LineChart>
         </ResponsiveContainer>

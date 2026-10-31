@@ -58,11 +58,11 @@ function Prices({ f }: { f: HourPoint[] }) {
       <h4>Day-ahead price forecast, DE-LU, tomorrow (EUR/MWh)</h4>
       <ResponsiveContainer width="100%" height={220}>
         <ComposedChart data={f} margin={{ top: 8, right: 12, left: -10, bottom: 0 }}>
-          <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" />
-          <XAxis dataKey="hour" tickFormatter={tick} stroke="var(--muted)" />
-          <YAxis stroke="var(--muted)" />
+          <CartesianGrid stroke="var(--grey)" />
+          <XAxis dataKey="hour" tickFormatter={tick} stroke="var(--text-2)" tick={{ fill: "var(--text-2)", fontFamily: "var(--mono)", fontSize: 12 }} label={{ value: "Hour", position: "insideBottomRight", offset: -4, fill: "var(--text-2)", fontSize: 12 }} />
+          <YAxis stroke="var(--text-2)" tick={{ fill: "var(--text-2)", fontFamily: "var(--mono)", fontSize: 12 }} label={{ value: "EUR/MWh", angle: -90, position: "insideLeft", fill: "var(--text-2)", fontSize: 12 }} />
           <Tooltip formatter={(v: number) => [`${v} EUR/MWh`, "Price"]} labelFormatter={(h) => hh(Number(h))} />
-          <Area dataKey="price" stroke="var(--accent)" fill="var(--accent-soft)" type="monotone" />
+          <Area dataKey="price" stroke="var(--navy)" fill="var(--navy-soft)" type="monotone" isAnimationActive={false} />
         </ComposedChart>
       </ResponsiveContainer>
       <div className="scroll" style={{ maxHeight: 200 }}>
@@ -88,14 +88,14 @@ function Residual({ f }: { f: HourPoint[] }) {
       <h4>Residual load = load − solar − wind (GW), DE, tomorrow</h4>
       <ResponsiveContainer width="100%" height={240}>
         <ComposedChart data={f} margin={{ top: 8, right: 12, left: -10, bottom: 0 }}>
-          <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" />
-          <XAxis dataKey="hour" tickFormatter={tick} stroke="var(--muted)" />
-          <YAxis stroke="var(--muted)" />
+          <CartesianGrid stroke="var(--grey)" />
+          <XAxis dataKey="hour" tickFormatter={tick} stroke="var(--text-2)" tick={{ fill: "var(--text-2)", fontFamily: "var(--mono)", fontSize: 12 }} label={{ value: "Hour", position: "insideBottomRight", offset: -4, fill: "var(--text-2)", fontSize: 12 }} />
+          <YAxis stroke="var(--text-2)" tick={{ fill: "var(--text-2)", fontFamily: "var(--mono)", fontSize: 12 }} label={{ value: "GW", angle: -90, position: "insideLeft", fill: "var(--text-2)", fontSize: 12 }} />
           <Tooltip labelFormatter={(h) => hh(Number(h))} />
-          <Line dataKey="load" name="Load" stroke="var(--muted)" dot={false} type="monotone" />
-          <Line dataKey="solar" name="Solar" stroke="#e0a800" dot={false} type="monotone" />
-          <Line dataKey="wind" name="Wind" stroke="#3b9fd6" dot={false} type="monotone" />
-          <Line dataKey="residual" name="Residual" stroke="var(--accent)" strokeWidth={2.5} dot={false} type="monotone" />
+          <Line dataKey="load" name="Load" stroke="var(--text-2)" dot={false} type="monotone" isAnimationActive={false} />
+          <Line dataKey="solar" name="Solar" stroke="var(--gold)" dot={false} type="monotone" isAnimationActive={false} />
+          <Line dataKey="wind" name="Wind" stroke="var(--grey-2)" strokeWidth={2} dot={false} type="monotone" isAnimationActive={false} />
+          <Line dataKey="residual" name="Residual" stroke="var(--navy)" strokeWidth={2.5} dot={false} type="monotone" isAnimationActive={false} />
         </ComposedChart>
       </ResponsiveContainer>
       <p className="muted">High residual load means conventional plants set the price (expensive hours). Low or negative residual load means renewables flood the market (cheap or negative prices).</p>
@@ -109,14 +109,14 @@ function Weather({ f }: { f: HourPoint[] }) {
       <h4>Weather, southern Germany, tomorrow</h4>
       <ResponsiveContainer width="100%" height={200}>
         <ComposedChart data={f} margin={{ top: 8, right: 12, left: -10, bottom: 0 }}>
-          <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" />
-          <XAxis dataKey="hour" tickFormatter={tick} stroke="var(--muted)" />
-          <YAxis yAxisId="l" stroke="var(--muted)" />
-          <YAxis yAxisId="r" orientation="right" stroke="var(--muted)" />
+          <CartesianGrid stroke="var(--grey)" />
+          <XAxis dataKey="hour" tickFormatter={tick} stroke="var(--text-2)" tick={{ fill: "var(--text-2)", fontFamily: "var(--mono)", fontSize: 12 }} label={{ value: "Hour", position: "insideBottomRight", offset: -4, fill: "var(--text-2)", fontSize: 12 }} />
+          <YAxis yAxisId="l" stroke="var(--text-2)" tick={{ fill: "var(--text-2)", fontFamily: "var(--mono)", fontSize: 12 }} label={{ value: "Cloud %", angle: -90, position: "insideLeft", fill: "var(--text-2)", fontSize: 12 }} />
+          <YAxis yAxisId="r" orientation="right" stroke="var(--text-2)" tick={{ fill: "var(--text-2)", fontFamily: "var(--mono)", fontSize: 12 }} label={{ value: "GW · °C", angle: 90, position: "insideRight", fill: "var(--text-2)", fontSize: 12 }} />
           <Tooltip labelFormatter={(h) => hh(Number(h))} />
-          <Area yAxisId="l" dataKey="cloud" name="Cloud cover %" stroke="#7a8aa0" fill="#7a8aa033" type="monotone" />
-          <Line yAxisId="r" dataKey="solar" name="Solar GW" stroke="#e0a800" dot={false} type="monotone" />
-          <Line yAxisId="r" dataKey="temp" name="Temp °C" stroke="var(--bad)" dot={false} type="monotone" />
+          <Area yAxisId="l" dataKey="cloud" name="Cloud cover %" stroke="var(--grey-2)" fill="var(--grey)" type="monotone" isAnimationActive={false} />
+          <Line yAxisId="r" dataKey="solar" name="Solar GW" stroke="var(--gold)" dot={false} type="monotone" isAnimationActive={false} />
+          <Line yAxisId="r" dataKey="temp" name="Temp °C" stroke="var(--navy)" dot={false} type="monotone" isAnimationActive={false} />
         </ComposedChart>
       </ResponsiveContainer>
       <div className="scroll" style={{ maxHeight: 170 }}>

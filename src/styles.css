@@ -222,21 +222,43 @@ input.mw { width: 72px; min-height: 36px; text-align: right; padding: 4px 6px; f
 .bidtable td { font-family: var(--mono); }
 .bidtable td:first-child, .bidtable th:first-child { text-align: left; }
 
-/* Scores and stats: important numbers 20–24 / 600 */
+/* States and feedback. Colour is always paired with a glyph or a label. */
+.alert { border: 1px solid var(--coral); border-left-width: 3px; background: var(--coral-soft); border-radius: var(--radius-sm); padding: 10px 12px; color: var(--coral-text); font-weight: 500; }
+.alert::before { content: "\26A0\FE0E "; }
+.sim { margin-top: var(--s1); padding: 10px 12px; border-radius: var(--radius-sm); background: var(--grey); font-size: 14px; }
+.sim.bad { background: var(--coral-soft); color: var(--coral-text); border: 1px solid var(--coral); }
+.sim.bad strong::before { content: "\2715\FE0E "; }
+.sim.good { background: var(--green-soft); color: var(--green-text); border: 1px solid var(--green); }
+.sim.good strong::before { content: "\2713\FE0E "; }
+.pill.good::before { content: "\2713\FE0E"; }
+.pill.bad::before { content: "\2715\FE0E"; }
+
+/* Progress: muted green on a light grey track, figures in monospace */
 .score-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: var(--s1); }
-.score { padding: 12px var(--s2); border-radius: var(--radius-sm); background: var(--surface-2); border: 1px solid var(--border); }
-.score .v { font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.01em; margin-top: 2px; }
-.bar { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-top: var(--s1); }
-.bar i { display: block; height: 100%; background: var(--orange); }
-.bigstat { font-size: 24px; font-weight: 600; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
-.verdict { padding: var(--s2) var(--s3); border-radius: var(--radius); border: 1px solid transparent; }
-.verdict.good { background: var(--good-soft); color: var(--good); }
-.verdict.bad { background: var(--bad-soft); color: var(--bad); }
-.verdict h2 { color: inherit; font-size: 20px; }
-.verdict .pill { color: var(--text-2); }
-.two { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s2); }
+.score { padding: 12px var(--s2); border-radius: var(--radius-sm); background: var(--surface); border: 1px solid var(--grey); }
+.score .v { font-size: 24px; font-weight: 600; letter-spacing: -0.01em; margin-top: 2px; color: var(--navy); }
+.bar { height: 6px; background: var(--grey); border-radius: 3px; overflow: hidden; margin-top: var(--s1); }
+.bar i { display: block; height: 100%; background: var(--green); }
+.bigstat { font-size: 28px; font-weight: 600; letter-spacing: -0.01em; color: var(--navy); }
+
+/* Result verdict: bounded panel, green or coral, with a glyph */
+.verdict { padding: var(--s2) var(--s3); border-radius: var(--radius); border: 1px solid transparent; color: var(--text); }
+.verdict.good { background: var(--green-soft); border-color: var(--green); }
+.verdict.bad { background: var(--coral-soft); border-color: var(--coral); }
+.verdict h2 { font-size: 22px; }
+.verdict.good h2 { color: var(--green-text); }
+.verdict.good h2::before { content: "\2713\FE0E "; }
+.verdict.bad h2 { color: var(--coral-text); }
+.verdict.bad h2::before { content: "\2715\FE0E "; }
+.verdict .pill { background: var(--surface); color: var(--navy); border-color: var(--grey-2); }
+
+/* Milestone / the one lesson: a quiet gold marker */
+.lesson { background: var(--surface); border: 1px solid var(--grey); border-left: 3px solid var(--gold); border-radius: var(--radius); padding: var(--s2) var(--s3); margin-top: var(--s2); }
+.lesson h4 { color: var(--gold-text); }
+
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s3); }
 @media (max-width: 900px) { .two { grid-template-columns: 1fr; } }
-.three { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s2); }
+.three { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s3); }
 @media (max-width: 1000px) { .three { grid-template-columns: 1fr; } }
 ul.clean { margin: 0; padding-left: 18px; }
 ul.clean li { margin: 4px 0; }
