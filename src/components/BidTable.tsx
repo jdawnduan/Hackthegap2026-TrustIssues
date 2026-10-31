@@ -28,9 +28,9 @@ export function BidTable({ schedule, prices, knowsStateOfCharge, onChange }: Pro
           <tbody>
             {Array.from({ length: 12 }, (_, i) => (
               <tr key={i}>
-                <td>{hh(i)}</td><td className="price" style={{ color: prices[i] < 0 ? "var(--bad)" : undefined }}>{prices[i]}</td>
+                <td>{hh(i)}</td><td className={`price ${prices[i] < 0 ? "neg" : ""}`}>{prices[i]}</td>
                 <td><input className="mw" type="number" step={10} value={schedule[i] || ""} placeholder="0" onChange={(e) => set(i, e.target.value)} /></td>
-                <td>{hh(i + 12)}</td><td className="price" style={{ color: prices[i + 12] < 0 ? "var(--bad)" : undefined }}>{prices[i + 12]}</td>
+                <td>{hh(i + 12)}</td><td className={`price ${prices[i + 12] < 0 ? "neg" : ""}`}>{prices[i + 12]}</td>
                 <td><input className="mw" type="number" step={10} value={schedule[i + 12] || ""} placeholder="0" onChange={(e) => set(i + 12, e.target.value)} /></td>
               </tr>
             ))}

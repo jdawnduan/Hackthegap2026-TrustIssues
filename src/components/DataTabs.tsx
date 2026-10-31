@@ -189,7 +189,7 @@ function News({ n }: { n: NewsItem[] }) {
     <div>
       <h4>Desk news feed</h4>
       {[...n].reverse().map((item, i) => (
-        <div key={i} style={{ padding: "8px 0", borderBottom: "1px solid var(--border)" }}>
+        <div key={i} style={{ padding: "8px 0", borderBottom: "1px solid var(--grey)" }}>
           <div className="row between"><strong>{item.headline}</strong><small className="mono">{item.time}</small></div>
           <small>{item.body}</small>
         </div>
