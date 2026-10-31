@@ -1,48 +1,76 @@
-/* Gate Closure visual system.
-   Principle: AI recommends, human decides.
-   Blue = AI copilot · Lavender = AI senior coach · Orange = human actions, selected states, primary CTAs.
-   8px spacing system (8 / 16 / 24 / 32). Cards: white, 1px border, 12px radius, no shadows. */
+/* Gate Closure design tokens.
+   A credible, minimalist financial-education product. Navy for brand, navigation and
+   headers; off-white pages; light grey sections and dividers; muted green for progress
+   and positive feedback; gold for milestones and highlights; coral for risk, warnings
+   and mistakes. Components use only these tokens, never hardcoded colours.
+   Text shades: the green, gold and coral brand values do not reach 4.5:1 as text on
+   light surfaces, so each has a darker -text variant for labels; fills, borders, icons
+   and large numbers use the brand value. Coral is never used for body text. */
 
 :root {
-  --bg: #f7f7f5;
-  --surface: #ffffff;
-  --surface-2: #f2f2ef;
-  --border: #e4e3de;
-  --text: #181817;
-  --text-2: #686864;
+  /* Brand and surfaces */
+  --navy: #1b2a49;
+  --navy-soft: #e7ebf2;
+  --offwhite: #f7f6f2;
+  --white: #ffffff;
+  --grey: #e8eaed;
+  --grey-2: #d8dbe0;
 
-  --orange: #f25c1d;
-  --orange-soft: #fff0e8;
-  --copilot: #2f5fb3;
-  --copilot-soft: #edf2fb;
-  --senior: #6b5ca5;
-  --senior-soft: #f1eef9;
+  /* Text (all >= 4.5:1 on white, off-white, grey and the soft tints) */
+  --text: #121a2b;
+  --text-2: #4a5565;
+  --text-on-navy: #ffffff;
+  --text-2-on-navy: #c9d2e3;
 
-  --good: #1f8a4c;
-  --good-soft: #e6f4ea;
-  --bad: #c6322b;
-  --bad-soft: #fbe8e6;
-  --warn: #a8720a;
-  --warn-soft: #fbf3df;
+  /* Semantic: fills / borders / large figures */
+  --green: #4e8b6a;
+  --green-soft: #e8f1ec;
+  --gold: #c9a24b;
+  --gold-soft: #f7f0df;
+  --coral: #d95f4b;
+  --coral-soft: #fbeae6;
+  /* Semantic: text shades */
+  --green-text: #356b4d;
+  --gold-text: #7a5e17;
+  --coral-text: #a8392a;
 
+  /* Spacing (8px scale), radii, motion */
   --s1: 8px;
   --s2: 16px;
   --s3: 24px;
   --s4: 32px;
-  --radius: 12px;
-  --radius-sm: 8px;
+  --radius: 8px;
+  --radius-sm: 6px;
+  --ease: 150ms ease;
 
-  --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  /* Type */
+  --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
 }
 
-/* Back-compat aliases for class rules below */
+/* Aliases kept so every existing rule resolves to a token */
 :root {
+  --bg: var(--offwhite);
+  --surface: var(--white);
+  --surface-2: var(--grey);
+  --border: var(--grey);
   --panel: var(--surface);
   --panel-2: var(--surface-2);
   --muted: var(--text-2);
-  --accent: var(--orange);
-  --accent-soft: var(--orange-soft);
+  --accent: var(--navy);
+  --accent-soft: var(--navy-soft);
+  --orange: var(--navy);
+  --orange-soft: var(--navy-soft);
+  --copilot: var(--navy);
+  --copilot-soft: var(--navy-soft);
+  --senior: var(--text-2);
+  --senior-soft: var(--grey);
+  --good: var(--green);
+  --good-soft: var(--green-soft);
+  --bad: var(--coral);
+  --bad-soft: var(--coral-soft);
+  --warn: var(--gold);
+  --warn-soft: var(--gold-soft);
 }
 
 * { box-sizing: border-box; }
