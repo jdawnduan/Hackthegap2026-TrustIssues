@@ -20,7 +20,7 @@ const k = (n: number) => `EUR ${(Math.round(n / 100) / 10).toFixed(1)}k`;
 export const CASE1: CaseDefinition = {
   id: "c1-battery-bid",
   order: 1,
-  title: "Case 1 · Day-ahead battery bid",
+  title: "Day-ahead battery bid",
   clock: `Saturday 09:30 · gate closure 12:00 for ${MARKET_DAY.weekday} ${MARKET_DAY.date}`,
   countdownSec: 300,
   brief:
@@ -61,7 +61,7 @@ export const CASE1: CaseDefinition = {
 export const CASE2: CaseDefinition = {
   id: "c2-intraday-prep",
   order: 2,
-  title: "Case 2 · Intraday preparation",
+  title: "Intraday preparation",
   clock: "Saturday 15:00 · auction results are in",
   countdownSec: 240,
   brief:
@@ -114,7 +114,7 @@ export interface UpcomingCase {
 export const UPCOMING_CASES: UpcomingCase[] = [
   {
     id: "c3-reservoir-water-value",
-    title: "Case 3 · Hydro reservoir: sell the water now?",
+    title: "Hydro reservoir: sell the water now?",
     clock: "Week 10 · replay of 'check your own book'",
     brief: "Spring prices are high and the copilot wants to sell reservoir energy this week. The reservoir is nearly full and inflows are rising, but winter supply has a value too.",
     minutes: 5,
@@ -123,7 +123,7 @@ export const UPCOMING_CASES: UpcomingCase[] = [
   },
   {
     id: "c4-ch-it-spread",
-    title: "Case 4 · CH → IT spread",
+    title: "CH → IT spread",
     clock: "Week 10 · cross-border",
     brief: "The Italian price is far above the Swiss one and the copilot sees a spread trade. Check whether there is any capacity left on the border before you can move the power.",
     minutes: 4,
@@ -132,7 +132,7 @@ export const UPCOMING_CASES: UpcomingCase[] = [
   },
   {
     id: "c5-gas-spark-spread",
-    title: "Case 5 · Gas plant: run tomorrow or not?",
+    title: "Gas plant: run tomorrow or not?",
     clock: "Week 11 · asset dispatch",
     brief: "The copilot recommends running the CCGT through the evening peak. Work out the clean spark spread with tomorrow's gas and CO₂ prices before you agree.",
     minutes: 5,
@@ -141,7 +141,7 @@ export const UPCOMING_CASES: UpcomingCase[] = [
   },
   {
     id: "c6-storm-week",
-    title: "Case 6 · Storm week: 8 GW wind swing",
+    title: "Storm week: 8 GW wind swing",
     clock: "Week 11 · rare case",
     brief: "Two hours before gate closure the German wind forecast swings by 8 GW. The copilot sizes a large trade on the old forecast. Decide what to do and who needs to know.",
     minutes: 4,
@@ -150,7 +150,7 @@ export const UPCOMING_CASES: UpcomingCase[] = [
   },
   {
     id: "c7-regulation-change",
-    title: "Case 7 · The rule changed",
+    title: "The rule changed",
     clock: "Week 12 · from the desk debrief",
     brief: "A balancing product the desk has traded profitably for years was redefined last month. The copilot follows last year's playbook. Spot what changed before you sign off.",
     minutes: 5,
