@@ -18,7 +18,7 @@ A junior trader works through short trading cases under a gate-closure countdown
 | What we test | Checking your own book before trusting a market story; improving on the AI's plan (on a Sunday, that means selling pre-dawn, since there is no morning peak) | Verifying a correct AI instead of rubber-stamping it, and resisting the urge to act after being burned |
 | Builds on | – | The position Case 1 created. Fell for the trap? Case 2 opens with an urgent clean-up and a loss |
 
-The market day is **real**: Sunday 11 May 2025 in the German zone, when residual load went negative at midday, Germany exported 12 GW, and the day-ahead price cleared at **−250 EUR/MWh** at 13:00 (Energy-Charts / SMARD, Open-Meteo, ENTSO-E Transparency Platform). Border capacities and the French nuclear notice in Case 2 are real too. The junior ("Mia"), the battery and its curtailment, the afternoon cloud update, intraday indications and the other headlines are **invented**. No Alpiq data or people. See [Using real data](#using-real-data) to load a different day.
+The market day is **real**: Sunday 11 May 2025 in the German zone, when residual load went negative at midday, Germany exported 12 GW, and the day-ahead price cleared at **−250 EUR/MWh** at 13:00 (Energy-Charts / SMARD, Open-Meteo, ENTSO-E Transparency Platform). Border capacities and the French nuclear notice in Case 2 are real too. The junior ("Dawn"), the battery and its curtailment, the afternoon cloud update, intraday indications and the other headlines are **invented**. No Alpiq data or people. See [Using real data](#using-real-data) to load a different day.
 
 ## Run it
 

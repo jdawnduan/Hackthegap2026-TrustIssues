@@ -12,12 +12,12 @@ Alpiq earns money by selling its flexibility at the right price. A junior approv
 
 The ladder gets shorter: the AI does the work that used to teach the job. The seat at the wheel gets empty: checking is a skill, and skills fade. We built a gym for that skill.
 
-## 1:00 Live demo: Mia's day (2 min 30)
+## 1:00 Live demo: Dawn's day (2 min 30)
 
-- **Case 1, 09:30.** Battery bid for Sunday 11 May 2025, a real day when German prices hit −250 EUR/MWh. The copilot's story is perfect: record solar, we get paid to charge at noon, sell into the evening peak. The senior asks: "Where would the 100 MWh physically go?" Mia doesn't check the asset. She accepts. *Debrief:* the battery was 80 % full after yesterday's curtailment. 80 MWh had nowhere to go. "Check your own book before you trust a market story."
+- **Case 1, 09:30.** Battery bid for Sunday 11 May 2025, a real day when German prices hit −250 EUR/MWh. The copilot's story is perfect: record solar, we get paid to charge at noon, sell into the evening peak. The senior asks: "Where would the 100 MWh physically go?" Dawn doesn't check the asset. She accepts. *Debrief:* the battery was 80 % full after yesterday's curtailment. 80 MWh had nowhere to go. "Check your own book before you trust a market story."
 - **Case 2, 15:00.** Her flawed position is now live: urgent clean-up and a loss on screen. New copilot proposal: a cloud band lifts afternoon prices, but not enough to move the charging, so hold. Burned once, the temptation is to distrust it and 'do something'. The gym scores that as a failure too: re-shifting would cost EUR 8k. She checks the weather tab, compares 11:00 with 13:00, dismisses the Flamanville 3 headline (returns Monday, flow-based border, Germany is exporting), and holds with a limit and an unwind rule.
 - **Profile.** Week 1 vs week 8 radar, calibration table, hints per case falling, the missed lesson queued to come back as a hydro reservoir case.
-- **Senior dashboard.** Every decision: what the AI said, what Mia decided, what she opened, who is accountable. Rubber-stamp flags.
+- **Senior dashboard.** Every decision: what the AI said, what Dawn decided, what she opened, who is accountable. Rubber-stamp flags.
 - **Debrief inbox.** Paste a real desk debrief, the AI drafts the next case, a senior approves it.
 
 ## 3:30 Why this scores (30 s)
