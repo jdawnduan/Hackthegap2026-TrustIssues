@@ -11,14 +11,14 @@ A junior trader works through short trading cases under a gate-closure countdown
 
 ## The demo in two cases (one trading day)
 
-| | Case 1 · Day-ahead battery bid (09:30) | Case 2 · Intraday preparation (15:00) |
+| | Case 1a · Day-ahead battery bid (09:30) | Case 1b · Intraday preparation (15:00) |
 |---|---|---|
 | Junior's task | Review the copilot's bid for a 50 MW / 100 MWh battery, approve or correct it | Prepare tomorrow's intraday plan after the auction results and the afternoon forecast update |
 | The copilot is… | **Wrong by omission.** Its market story is true, but the battery is already 80 % full after a curtailed discharge; 80 of the 100 MWh it wants to buy cannot be stored | **Right, and says hold.** A cloud band lifts afternoon prices by ~40 EUR, but the midday trough is ~200 EUR deep, so moving the charging would cost ~EUR 8k. A real Flamanville 3 return notice is the red herring |
 | What we test | Checking your own book before trusting a market story; improving on the AI's plan (on a Sunday, that means selling pre-dawn, since there is no morning peak) | Verifying a correct AI instead of rubber-stamping it, and resisting the urge to act after being burned |
-| Builds on | – | The position Case 1 created. Fell for the trap? Case 2 opens with an urgent clean-up and a loss |
+| Builds on | – | The position 1a created. Fell for the trap? 1b opens with an urgent clean-up and a loss |
 
-The market day is **real**: Sunday 11 May 2025 in the German zone, when residual load went negative at midday, Germany exported 12 GW, and the day-ahead price cleared at **−250 EUR/MWh** at 13:00 (Energy-Charts / SMARD, Open-Meteo, ENTSO-E Transparency Platform). Border capacities and the French nuclear notice in Case 2 are real too. The junior ("Dawn"), the battery and its curtailment, the afternoon cloud update, intraday indications and the other headlines are **invented**. No Alpiq data or people. See [Using real data](#using-real-data) to load a different day.
+The market day is **real**: Sunday 11 May 2025 in the German zone, when residual load went negative at midday, Germany exported 12 GW, and the day-ahead price cleared at **−250 EUR/MWh** at 13:00 (Energy-Charts / SMARD, Open-Meteo, ENTSO-E Transparency Platform). Border capacities and the French nuclear notice in Case 1b are real too. The junior ("Dawn"), the battery and its curtailment, the afternoon cloud update, intraday indications and the other headlines are **invented**. No Alpiq data or people. See [Using real data](#using-real-data) to load a different day.
 
 ## Run it
 
@@ -72,7 +72,7 @@ AI_USAGE.md      where we used AI to build this (required deliverable)
 python3 scripts/fetch_real_data.py --date 2025-05-11
 ```
 
-This pulls day-ahead prices, load, solar and wind for DE-LU from the [Energy-Charts API](https://api.energy-charts.info) (Fraunhofer ISE, data from Bundesnetzagentur / SMARD, CC BY 4.0) and hourly cloud cover and temperature for Munich from [Open-Meteo](https://open-meteo.com) (CC BY 4.0), writes `src/shared/realday.json`, and keeps the raw responses in `data/real/` (git-ignored). After loading a new day, re-read the Case 1 hidden notes in `src/shared/cases.ts`: the trap only works if midday is cheap and the evening is expensive, and the reference schedule assumes a Sunday with no morning peak.
+This pulls day-ahead prices, load, solar and wind for DE-LU from the [Energy-Charts API](https://api.energy-charts.info) (Fraunhofer ISE, data from Bundesnetzagentur / SMARD, CC BY 4.0) and hourly cloud cover and temperature for Munich from [Open-Meteo](https://open-meteo.com) (CC BY 4.0), writes `src/shared/realday.json`, and keeps the raw responses in `data/real/` (git-ignored). After loading a new day, re-read the Case 1a hidden notes in `src/shared/cases.ts`: the trap only works if midday is cheap and the evening is expensive, and the reference schedule assumes a Sunday with no morning peak.
 
 Border capacities and outage notices come from the [ENTSO-E Transparency Platform](https://transparency.entsoe.eu). Its API needs a token, but the GUI exports are free after sign-in (table view → ⋮ → Export → CSV). Download *Transmission → Forecasted Transfer Capacities – Day Ahead* for DE-LU and *Outages → Unavailability of Production and Generation Units* for France, then:
 

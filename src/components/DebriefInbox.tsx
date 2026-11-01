@@ -191,7 +191,7 @@ export function DebriefInbox() {
             {d.status === "approved" && (
               <div className="row" style={{ marginTop: 10 }}>
                 <button className="btn sm" onClick={() => setFullSetup(d.id)}>View full case setup</button>
-                <small className="muted">Now visible on the juniors' dashboard as the next case after today's two.</small>
+                <small className="muted">Now visible on the juniors' dashboard as Case 2.</small>
               </div>
             )}
           </div>

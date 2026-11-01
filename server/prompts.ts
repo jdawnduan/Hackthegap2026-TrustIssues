@@ -22,7 +22,7 @@ export function caseContext(def: CaseDefinition, position?: Schedule): string {
     lines.push(`Copilot recommendation shown to the junior: ${COPILOT_CASE1.body}`);
   } else {
     const c2 = buildCase2Context(position ?? []);
-    lines.push(`Day-ahead position the junior created in Case 1: ${scheduleText(position)}`);
+    lines.push(`Day-ahead position the junior created in Case 1a: ${scheduleText(position)}`);
     if (c2.needsCleanup) lines.push(`Position problem shown to the junior: ${c2.cleanupNote}`);
     lines.push(`Copilot recommendation shown to the junior: ${c2.copilot.body}`);
   }

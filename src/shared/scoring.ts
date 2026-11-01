@@ -116,7 +116,7 @@ export function gradeWithRules(
     scores.own_book = clamp((opened(sub, "auction") ? 50 : 0) + (opened(sub, "asset") ? 30 : 0) + 20);
     if (c2.needsCleanup) {
       scores.own_book = clamp((scores.own_book ?? 0) - (cleanupAddressed ? 0 : 50));
-      if (!cleanupAddressed) feedback.push("Your position from Case 1 was not deliverable and your plan did not deal with it.");
+      if (!cleanupAddressed) feedback.push("Your position from Case 1a was not deliverable and your plan did not deal with it.");
     }
 
     const newsOpened = opened(sub, "news");
@@ -145,7 +145,7 @@ export function gradeWithRules(
         ? `Re-shifting the 13:00 block to 11:00 costs EUR ${c2.reshiftCostEUR.toLocaleString("en-US")} (you give up the -250 price for -52).`
         : "Holding the position costs nothing; the evening sells at 117 and 125 EUR stand.";
     pnlNote = c2.needsCleanup
-      ? `${shiftNote} Cleaning up the Case 1 position costs EUR ${Math.round(cleanupCost).toLocaleString("en-US")}${cleanupAddressed ? "" : " (more, because it was left to the imbalance market)"}.`
+      ? `${shiftNote} Cleaning up the Case 1a position costs EUR ${Math.round(cleanupCost).toLocaleString("en-US")}${cleanupAddressed ? "" : " (more, because it was left to the imbalance market)"}.`
       : shiftNote;
   }
 

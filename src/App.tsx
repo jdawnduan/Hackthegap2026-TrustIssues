@@ -69,7 +69,7 @@ export function App() {
             <div className="panel">
               <h1>A judgement gym for junior energy traders</h1>
               <p>{JUNIOR.name} is {JUNIOR.currentWeek} weeks into Alpiq's short-term desk. Every case gives her an AI copilot's recommendation under a gate-closure countdown. Sometimes the copilot is wrong. Her job is to find out which, and to say what she checked.</p>
-              <p className="muted">Today's two cases are one trading day: the morning bid for a battery, then the afternoon intraday preparation. The second case starts from whatever position the first one created.</p>
+              <p className="muted">Case 1 is one trading day in two parts: 1a, the morning bid for a battery, and 1b, the afternoon intraday preparation, which starts from whatever position 1a created.</p>
               <ul className="clean">
                 <li><strong>Learning is measured:</strong> six sub-skills, calibration, hints used, tabs opened, all logged per case.</li>
                 <li><strong>Oversight is real:</strong> the junior decides and is accountable; the AI never books a trade; an audit trail flags rubber-stamping.</li>
@@ -85,7 +85,7 @@ export function App() {
                     <div className="row between"><h3 style={{ margin: 0 }}>{c.title}</h3><small className="mono muted">{c.clock}</small></div>
                     <p className="muted" style={{ margin: 0 }}>{c.brief}</p>
                     <div className="row between">
-                      <small>{Math.round(c.countdownSec / 60)} min · {result ? <span className={`pill ${result.correct ? "good" : "bad"}`}>{result.correct ? "passed" : "failed"} · {result.overall}</span> : locked ? <span className="pill">play Case 1 first</span> : <span className="pill accent">ready</span>}</small>
+                      <small>{Math.round(c.countdownSec / 60)} min · {result ? <span className={`pill ${result.correct ? "good" : "bad"}`}>{result.correct ? "passed" : "failed"} · {result.overall}</span> : locked ? <span className="pill">play Case 1a first</span> : <span className="pill accent">ready</span>}</small>
                       <button className="btn primary sm" disabled={locked} onClick={() => startCase(c)}>{result ? "Replay" : "Start"}</button>
                     </div>
                   </div>
@@ -93,11 +93,11 @@ export function App() {
               })}
               {approvedDrafts.map((d, i) => (
                 <div key={d.id} className={`case-tile approved-draft ${done2 ? "" : "locked"}`}>
-                  <div className="row between"><h3 style={{ margin: 0 }}>Case {CASES.length + i + 1} · {d.title}</h3><small className="mono muted">added {d.approvedAt ? new Date(d.approvedAt).toLocaleTimeString() : "today"}</small></div>
+                  <div className="row between"><h3 style={{ margin: 0 }}>Case {2 + i} · {d.title}</h3><small className="mono muted">added {d.approvedAt ? new Date(d.approvedAt).toLocaleTimeString() : "today"}</small></div>
                   <p className="muted" style={{ margin: 0 }}>{d.brief.replace(/\s*\[check:[^\]]*\]/g, "")}</p>
                   <div className="row between">
                     <small>{Math.round((d.countdownSec ?? 300) / 60)} min · <span className="pill good">new · from a desk debrief</span> <span className="pill">approved by {d.approvedBy}</span></small>
-                    <button className="btn primary sm" disabled title={done2 ? "Scenario data is being prepared for this case" : "Unlocks after Case 2"}>{done2 ? "Coming up" : "Play Case 2 first"}</button>
+                    <button className="btn primary sm" disabled title={done2 ? "Scenario data is being prepared for this case" : "Unlocks after Case 1b"}>{done2 ? "Coming up" : "Play Case 1b first"}</button>
                   </div>
                 </div>
               ))}
@@ -105,7 +105,7 @@ export function App() {
                 const prereqDone = app.results.some((r) => r.caseId === u.unlocksAfter) && approvedDrafts.length === 0;
                 return (
                   <div key={u.id} className={`case-tile upcoming ${prereqDone ? "" : "locked"}`}>
-                    <div className="row between"><h3 style={{ margin: 0 }}>Case {CASES.length + approvedDrafts.length + i + 1} · {u.title}</h3><small className="mono muted">{u.clock}</small></div>
+                    <div className="row between"><h3 style={{ margin: 0 }}>Case {2 + approvedDrafts.length + i} · {u.title}</h3><small className="mono muted">{u.clock}</small></div>
                     <p className="muted" style={{ margin: 0 }}>{u.brief}</p>
                     <div className="row between">
                       <small>{u.minutes} min · <span className="pill">{prereqDone ? "next up" : "locked"}</span> <span className="pill senior">{u.tag}</span></small>
@@ -136,7 +136,7 @@ export function App() {
       {view === "debrief" && lastResult && (
         <Debrief
           result={lastResult}
-          nextLabel={lastResult.caseId === CASE1.id ? "Continue to Case 2: intraday prep" : "See the judgement profile"}
+          nextLabel={lastResult.caseId === CASE1.id ? "Continue to Case 1b: intraday prep" : "See the judgement profile"}
           onNext={() => (lastResult.caseId === CASE1.id ? startCase(CASE2) : setView("profile"))}
         />
       )}
