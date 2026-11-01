@@ -20,7 +20,7 @@ const k = (n: number) => `EUR ${(Math.round(n / 100) / 10).toFixed(1)}k`;
 export const CASE1: CaseDefinition = {
   id: "c1-battery-bid",
   order: 1,
-  title: "Day-ahead battery bid",
+  title: "Case 1 · Day-ahead battery bid",
   clock: `Saturday 09:30 · gate closure 12:00 for ${MARKET_DAY.weekday} ${MARKET_DAY.date}`,
   countdownSec: 300,
   brief:
@@ -61,7 +61,7 @@ export const CASE1: CaseDefinition = {
 export const CASE2: CaseDefinition = {
   id: "c2-intraday-prep",
   order: 2,
-  title: "Intraday preparation",
+  title: "Case 2 · Intraday preparation",
   clock: "Saturday 15:00 · auction results are in",
   countdownSec: 240,
   brief:

@@ -47,7 +47,7 @@ export function App() {
   return (
     <div className="app">
       <header className="topbar">
-        <div className="brand"><span className="dot" />Judgement gym</div>
+        <div className="brand"><span className="dot" />Gate Closure</div>
         <nav className="nav">
           {nav.map(([v, l]) => (
             <button key={v} className={view === v || (v === "home" && (view === "case" || view === "debrief")) ? "active" : ""} onClick={() => setView(v)}>{l}</button>

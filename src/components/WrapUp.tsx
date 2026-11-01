@@ -56,7 +56,7 @@ export function WrapUp() {
   return (
     <div className="page stack wrapup">
       <div className="panel plain">
-        <h1>How we judge, and how the gym answers</h1>
+        <h1>How we judge, and how Gate Closure answers</h1>
         <p className="muted">Alpiq's rubric for The Junior Loop, with what we built against each line.</p>
       </div>
       <div className="panel">
@@ -79,7 +79,7 @@ export function WrapUp() {
       </div>
       <div className="panel closing">
         <h2>The goal isn't zero trust. It's calibrated trust.</h2>
-        <p className="muted">AI recommends. Human decides. Team Trust Issues · Hack the Gap 2026</p>
+        <p className="muted">Gate Closure · AI recommends. Human decides. · Team Trust Issues · Hack the Gap 2026</p>
       </div>
     </div>
   );
