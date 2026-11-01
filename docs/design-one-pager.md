@@ -8,7 +8,7 @@
 
 | Role | Does | Does not |
 |---|---|---|
-| **Junior trader** (Mia) | Reviews the copilot's proposal, investigates data tabs, argues with the senior, decides (accept / modify / reject / escalate), states confidence and rationale | Delegate the decision to the AI |
+| **Junior trader** (Dawn) | Reviews the copilot's proposal, investigates data tabs, argues with the senior, decides (accept / modify / reject / escalate), states confidence and rationale | Delegate the decision to the AI |
 | **AI copilot** | Proposes a bid or plan with sources and a confident rationale. Scripted per case; in some cases the trap | Book trades. Hold any accountability |
 | **AI senior** (live LLM) | Asks "what would change your mind?", "what's the downside?", "what did you not check?"; hint ladder climbs only while key evidence is unopened; grades reasoning quality | Give the answer, confirm or deny the copilot |
 | **Human senior trader** | Reviews the audit trail and rubber-stamp flags, holds the weekly debrief, approves every new case the AI drafts from debrief notes, owns escalated decisions | Rubber-stamp: a share of what seniors review is known-wrong AI output |
