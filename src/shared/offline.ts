@@ -33,9 +33,10 @@ export function offlineSeniorTurn(input: SeniorTurnInput): SeniorTurnOutput {
     };
   }
 
-  // Hints escalate only while the key evidence is still unopened.
+  // Hints escalate only while the key evidence is still unopened; an explicit request climbs at once.
+  const askedForHint = /\bhint\b/.test(last);
   const trapOrKeyMissing = def.trapTab ? !opened.has(def.trapTab) : missingKey.length > 0;
-  if (trapOrKeyMissing && seniorTurns >= 1) {
+  if (trapOrKeyMissing && (seniorTurns >= 1 || askedForHint)) {
     const next = Math.min(3, input.hintLevelSoFar + 1) as 1 | 2 | 3;
     const hint = def.hints.find((h) => h.level === next) ?? def.hints[def.hints.length - 1];
     return { reply: hint.text, hintLevel: hint.level };

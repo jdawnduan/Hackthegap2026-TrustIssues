@@ -218,3 +218,7 @@ ul.clean li { margin: 3px 0; }
 .modal.setup .panel + .panel { margin-top: 12px; }
 .modal.setup .pill input { margin: 0 2px 0 0; }
 .modal.setup table.data td:first-child { min-width: 240px; }
+
+/* Hint request: a deliberate, counted action */
+.btn.hint { border-style: dashed; color: var(--senior); }
+.btn.hint:hover { background: var(--senior-soft); }

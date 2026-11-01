@@ -6,9 +6,10 @@ interface Props {
   busy: boolean;
   source: "claude" | "offline" | null;
   onSend: (text: string) => void;
+  onHint: () => void;
 }
 
-export function SeniorChat({ chat, busy, source, onSend }: Props) {
+export function SeniorChat({ chat, busy, source, onSend, onHint }: Props) {
   const [text, setText] = useState("");
   const endRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -29,7 +30,7 @@ export function SeniorChat({ chat, busy, source, onSend }: Props) {
         {source && <small className="muted">{source === "claude" ? "live" : "offline script"}</small>}
       </div>
       <div className="chat">
-        {chat.length === 0 && <small className="muted">The senior will challenge your reasoning. They will not give you the answer. Say what you think and why.</small>}
+        {chat.length === 0 && <small className="muted">The senior stays quiet until you ask. Type a question, or ask for a hint. They will challenge your reasoning but never give you the answer. Hints are counted.</small>}
         {chat.map((m, i) => (
           <div key={i} className={`bubble ${m.role}`}>
             {m.role === "senior" && <span className="tag">Senior{m.hintLevel ? ` · hint ${m.hintLevel}` : ""}</span>}
@@ -49,6 +50,7 @@ export function SeniorChat({ chat, busy, source, onSend }: Props) {
           disabled={busy}
         />
         <button className="btn" onClick={send} disabled={busy || !text.trim()}>Send</button>
+        <button className="btn hint" onClick={onHint} disabled={busy} title="Ask the senior for a hint (counted in your score)">Hint</button>
       </div>
     </div>
   );

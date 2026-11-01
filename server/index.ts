@@ -81,7 +81,7 @@ app.post("/api/senior", async (req, res) => {
     `Highest hint level used so far: ${body.hintLevelSoFar}`,
     "",
     "CONVERSATION SO FAR:",
-    transcript || "(the junior has not said anything yet; open with one challenging question)",
+    transcript || "(empty)",
     "",
     "Write the senior's next reply.",
   ].join("\n");

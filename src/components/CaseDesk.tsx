@@ -112,14 +112,8 @@ export function CaseDesk({ def, onDone }: Props) {
     setChat(next);
     void askSenior(next);
   };
-  const openingAsked = useRef(false);
-  useEffect(() => {
-    if (stage === "work" && !openingAsked.current) {
-      openingAsked.current = true;
-      void askSenior([]);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stage]);
+  // The senior says nothing until asked: the junior types a question or presses "Ask for a hint".
+  const onHint = () => onSend("Can I have a hint?");
 
   // --- decision
   const [decision, setDecisionState] = useState<Decision | null>(null);
@@ -261,7 +255,7 @@ export function CaseDesk({ def, onDone }: Props) {
           <div className="stack">
             {stage === "firsttake" && <div className="lock-note">Form your own view first. The senior and the decision panel unlock when you open the copilot's recommendation.</div>}
             <div className={`panel ${stage === "firsttake" ? "locked" : ""}`} aria-disabled={stage === "firsttake"}>
-              <SeniorChat chat={chat} busy={busy} source={source} onSend={onSend} />
+              <SeniorChat chat={chat} busy={busy} source={source} onSend={onSend} onHint={onHint} />
             </div>
             <div className={`panel ${stage === "firsttake" ? "locked" : ""}`} aria-disabled={stage === "firsttake"}>
               <h3>Your decision</h3>
