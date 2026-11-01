@@ -1,10 +1,10 @@
-// Invented history for the invented junior "Mia" (weeks 1–7), so the profile
+// Invented history for the invented junior "Dawn" (weeks 1–7), so the profile
 // shows a growth trend in the demo. No real person or real employee data.
 
 import type { CalibrationPoint, ReplayItem, SubskillId, WeekSnapshot } from "./types";
 
 export const JUNIOR = {
-  name: "Mia",
+  name: "Dawn",
   role: "Junior short-term trader, Alpiq (invented persona)",
   startWeek: 1,
   currentWeek: 8,
@@ -29,7 +29,7 @@ export const SEED_WEEKS: WeekSnapshot[] = [
   { week: 7, scores: s(60, 70, 66, 60, 66, 62), cases: 7, trapsCaught: 3, trapsSeen: 4, hintsPerCase: 1.1 },
 ];
 
-/** Earlier decisions with stated confidence: early Mia is overconfident. */
+/** Earlier decisions with stated confidence: early Dawn is overconfident. */
 export const SEED_CALIBRATION: CalibrationPoint[] = [
   { confidence: 90, correct: false },
   { confidence: 85, correct: false },

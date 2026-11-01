@@ -93,12 +93,15 @@ export function DebriefInbox() {
   const draft = async () => {
     setError(null);
     const base = { id: `draft-${Date.now()}`, createdAt: new Date().toISOString(), status: "draft" as const };
-    // Demo shortcut: the example note returns the draft Claude produced for it, instantly.
+    setBusy(true);
+    // Demo shortcut: the example note returns the draft Claude produced for it in an earlier live run,
+    // after a short pause so it still reads as "drafting" on stage.
     if (note.trim() === EXAMPLE_NOTE.trim()) {
+      await new Promise((r) => setTimeout(r, 1000));
       setState((s) => ({ drafts: [{ ...base, ...CANNED_DRAFT }, ...s.drafts] }));
+      setBusy(false);
       return;
     }
-    setBusy(true);
     try {
       const d = await api.draftCase(note);
       setState((s) => ({ drafts: [completeDraft(d), ...s.drafts] }));
@@ -191,7 +194,7 @@ export function DebriefInbox() {
             {d.status === "approved" && (
               <div className="row" style={{ marginTop: 10 }}>
                 <button className="btn sm" onClick={() => setFullSetup(d.id)}>View full case setup</button>
-                <small className="muted">Now visible on the juniors' dashboard as the next case after today's two.</small>
+                <small className="muted">Now visible on the juniors' dashboard as Case 2.</small>
               </div>
             )}
           </div>

@@ -20,7 +20,7 @@ const k = (n: number) => `EUR ${(Math.round(n / 100) / 10).toFixed(1)}k`;
 export const CASE1: CaseDefinition = {
   id: "c1-battery-bid",
   order: 1,
-  title: "Day-ahead battery bid",
+  title: "Case 1a · Day-ahead battery bid",
   clock: `Saturday 09:30 · gate closure 12:00 for ${MARKET_DAY.weekday} ${MARKET_DAY.date}`,
   countdownSec: 300,
   brief:
@@ -61,7 +61,7 @@ export const CASE1: CaseDefinition = {
 export const CASE2: CaseDefinition = {
   id: "c2-intraday-prep",
   order: 2,
-  title: "Intraday preparation",
+  title: "Case 1b · Intraday preparation",
   clock: "Saturday 15:00 · auction results are in",
   countdownSec: 240,
   brief:
@@ -74,7 +74,7 @@ export const CASE2: CaseDefinition = {
   trapDescription:
     "No trap: the copilot is right, and the right call is to hold. A cloud band cuts German solar by about 6 GW from 13:00 to 16:00, lifting intraday indications by ~40 EUR in those hours. But the midday trough is ~200 EUR deep, so 13:00 is still ~160 EUR cheaper than 11:00 and moving the charging would cost about EUR 8k. The Flamanville 3 headline is a real ENTSO-E notice and a red herring: the reactor only returns after midnight Monday, France sits behind flow-based coupling (no fixed FR–DE capacity), and Germany is exporting ~12 GW at midday, so French supply is not what sets Sunday-afternoon German prices.",
   seniorHiddenNotes:
-    "The copilot is correct: hold, set an alert on the 18:00 update, and only sell the 13:00 block back above a limit. Good juniors verify the cloud band in an independent source (Weather & solar tab: cloud cover 70–80% from 13:00, solar down ~6 GW), check the price tab to see that 13:00 (-250 cleared, -210 indicated) is still far cheaper than 11:00 (-52), dismiss the Flamanville 3 news (it takes effect 00:00 Monday, after the window; FR–DE is flow-based so there is no border capacity to 'fill'; Germany is a net exporter of ~12 GW at midday, so extra French supply is not the constraint), and accept with a price limit and an unwind condition. A junior who was burned in Case 1 is tempted to distrust everything and 'do something': re-shifting the charging (Reject) costs about EUR 8k. If the junior's Case 1 position overfilled the battery, they must also deal with the excess.",
+    "The copilot is correct: hold, set an alert on the 18:00 update, and only sell the 13:00 block back above a limit. Good juniors verify the cloud band in an independent source (Weather & solar tab: cloud cover 70–80% from 13:00, solar down ~6 GW), check the price tab to see that 13:00 (-250 cleared, -210 indicated) is still far cheaper than 11:00 (-52), dismiss the Flamanville 3 news (it takes effect 00:00 Monday, after the window; FR–DE is flow-based so there is no border capacity to 'fill'; Germany is a net exporter of ~12 GW at midday, so extra French supply is not the constraint), and accept with a price limit and an unwind condition. A junior who was burned in Case 1a is tempted to distrust everything and 'do something': re-shifting the charging (Reject) costs about EUR 8k. If the junior's Case 1a position overfilled the battery, they must also deal with the excess.",
   hints: [
     { level: 1, text: "The copilot sounds confident again. What would make it wrong this time?" },
     { level: 2, text: "Can you confirm the cloud band from a source other than the copilot's note, and what does a 40 EUR lift do to a 200 EUR trough?" },

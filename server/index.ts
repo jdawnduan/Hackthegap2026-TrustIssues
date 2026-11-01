@@ -81,7 +81,7 @@ app.post("/api/senior", async (req, res) => {
     `Highest hint level used so far: ${body.hintLevelSoFar}`,
     "",
     "CONVERSATION SO FAR:",
-    transcript || "(the junior has not said anything yet; open with one challenging question)",
+    transcript || "(empty)",
     "",
     "Write the senior's next reply.",
   ].join("\n");
@@ -214,5 +214,5 @@ if (process.env.NODE_ENV === "production") {
 
 const port = Number(process.env.PORT ?? 8787);
 app.listen(port, () => {
-  console.log(`Judgement gym API on http://localhost:${port} (Claude: ${claudeEnabled() ? MODEL : "offline mode"})`);
+  console.log(`Gate Closure API on http://localhost:${port} (Claude: ${claudeEnabled() ? MODEL : "offline mode"})`);
 });

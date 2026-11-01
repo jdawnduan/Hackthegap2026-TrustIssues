@@ -23,7 +23,7 @@ Refusal handling: requests opt into Anthropic's server-side default fallback; a 
 
 - It did not supply any Alpiq data. Market data is a real public day (11 May 2025, Energy-Charts / SMARD and Open-Meteo) fetched by a team member with the repo script; the rest is invented and labelled as such in `data/README.md`.
 - It did not invent facts about Alpiq beyond the public kickoff material; statements about the desk are illustrative.
-- No real person is modelled; the junior "Mia" is invented.
+- No real person is modelled; the junior "Dawn" is invented.
 
 ## Honest caveats
 
